@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "SFML",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/IT/vsprojects/external/SFML/include",
+                "C:/IT/vsprojects/external/SFML/lib"
+                
+            ],
+            "defines": [],
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}

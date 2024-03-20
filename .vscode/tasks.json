@@ -1,0 +1,30 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "main.c",
+                "-o",
+                "main",
+                "-I",
+                "C:/IT/vsprojects/external/SFML/include", // tu zmieniasz na swoje
+                "-L",
+                "C:/IT/vsprojects/external/SFML/lib/gcc", // tu też
+                "-lcsfml-graphics",
+                "-lcsfml-window",
+                "-lcsfml-system"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}
