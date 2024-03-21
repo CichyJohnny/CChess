@@ -1,12 +1,6 @@
 #include <SFML/Graphics.h>
 #include <SFML/Window.h>
-// #include <stdio.h>
 
-// int main() {
-//     printf("Hello World\n");
-
-//     return 0;
-// }
 int main()
 {
     sfVideoMode mode = {800, 450, 32};
@@ -15,7 +9,7 @@ int main()
     sfRectangleShape *shape = sfRectangleShape_create();
     sfVector2f vf = {200, 200}, pos = {30, 30};
     sfRectangleShape_setSize(shape, vf);
-    sfRectangleShape_setFillColor(shape, sfGreen);
+    sfRectangleShape_setFillColor(shape, sfRed);
     sfRectangleShape_setPosition(shape, pos);
 
     while (sfRenderWindow_isOpen(window))
