@@ -16,6 +16,16 @@ void canmove(sfRenderWindow* window, struct figure chess[8][8], sfVector2i posit
     }
     if (figure.name == 'P' || figure.name == 'p') {
         pawnMove(chess, position, moveBoard);
+    } else if (figure.name == 'N' || figure.name == 'n') {
+        knightMove(chess, position, moveBoard);
+    } else if (figure.name == 'R' || figure.name == 'r') {
+        rookMove(chess, position, moveBoard);
+    } else if (figure.name == 'B' || figure.name == 'b') {
+        bishopMove(chess, position, moveBoard);
+    } else if (figure.name == 'Q' || figure.name == 'q') {
+        queenMove(chess, position, moveBoard);
+    } else if (figure.name == 'K' || figure.name == 'k') {
+        kingMove(chess, position, moveBoard);
     }
 }
 

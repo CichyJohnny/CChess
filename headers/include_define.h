@@ -14,4 +14,8 @@ struct figure {
     int num;
 };
 
+struct game {
+    int turn;
+};
+
 #endif

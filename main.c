@@ -14,6 +14,9 @@ int main() {
 
     defineChessBoard(squares);
 
+    struct game game;
+    game.turn = 1;
+
     struct figure empty = {'.', NULL, 0};
     
     // Figures init
@@ -73,7 +76,7 @@ int main() {
                     sfVector2i mousePos = {event.mouseButton.x / SQUARE_SIZE, event.mouseButton.y / SQUARE_SIZE};
                     if (selectedPiece.x == -1) {
                         // Selecting a piece
-                        if (chess[mousePos.y][mousePos.x].name != '.') {
+                        if (isWhiteBlack(chess[mousePos.y][mousePos.x].name) == game.turn) {
                             selectedPiece = mousePos;
                             canmove(window, chess, mousePos, moveBoard);
                         }
@@ -89,6 +92,7 @@ int main() {
                         chess[mousePos.y][mousePos.x] = moveName;
                         selectedPiece = (sfVector2i){-1, -1}; // Deselecting the piece
                         clearBoard(moveBoard);
+                        game.turn = -game.turn;
                         
                     }
                 }
