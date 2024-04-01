@@ -8,7 +8,7 @@ int main() {
     // Window setting
     sfVideoMode mode = {WINDOW_WIDTH, WINDOW_HEIGHT, 32};
     sfRenderWindow* window = sfRenderWindow_create(mode, "Chessboard", sfDefaultStyle, NULL);
-    sfRenderWindow_setFramerateLimit(window, 60);
+    sfRenderWindow_setFramerateLimit(window, 30);
 
     // Chessboard init
     sfRectangleShape* squares[8][8];
@@ -41,11 +41,6 @@ int main() {
         for (int j=0; j<8; j++) {
             char name = figures[i][j];
 
-            if (name == '.') {
-                chess[i][j] = empty;
-                continue;
-            }
-
             sfVector2f position = {j * SQUARE_SIZE, i * SQUARE_SIZE};
             chess[i][j].name = name;
             chess[i][j].num = 0;
@@ -53,9 +48,13 @@ int main() {
         }
     }
 
+    allMoves(chess);
+
     // Move boeard init
     int moveBoard[8][8];
     clearBoard(moveBoard);
+
+    int (*move)[8][8] = &moveBoard;
 
     // To store the selected piece position
     sfVector2i selectedPiece = {-1, -1};
@@ -86,25 +85,30 @@ int main() {
                         // Check if it't player's turn
                         if (isWhiteBlack(chess[mousePos.y][mousePos.x].name) == game.turn) {
                             selectedPiece = mousePos;
-                            canMove(chess, mousePos, moveBoard);
+                            // canMove(chess, mousePos, moveBoard);
+                            move = &(chess[mousePos.y][mousePos.x].moveBoard);
                         }
                     }
                     // Check if move is right
-                    else if (moveBoard[mousePos.y][mousePos.x] == 0) {
+                    else if ((*move)[mousePos.y][mousePos.x] == 0) {
                         selectedPiece = (sfVector2i){-1, -1};
-                        clearBoard(moveBoard);
+                        move = &moveBoard;
                     } 
                     // Moving the selected piece
                     else {
-                        struct figure moveName = chess[selectedPiece.y][selectedPiece.x];
+                        struct figure movePiece = chess[selectedPiece.y][selectedPiece.x];
                         chess[selectedPiece.y][selectedPiece.x] = empty; // clear square
-                        chess[mousePos.y][mousePos.x] = moveName; // movie piece
-                        clearBoard(moveBoard);
+                        chess[mousePos.y][mousePos.x] = movePiece; // movie piece
+                        clearBoard(*move);
 
                         selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
 
                         game.turn = -game.turn; // change players
                         chess[mousePos.y][mousePos.x].num++; // +1 to number of times a piece was moved (espiecially for pawns)
+
+                        spritesUpdate(chess);
+
+                        allMoves(chess);
                     }
                 }
             }
@@ -113,7 +117,7 @@ int main() {
         // Render frame
         sfRenderWindow_clear(window, sfWhite);
         drawChessboard(window, squares);
-        drawMoves(window, moveBoard);
+        drawMoves(window, *move);
         drawFigures(window, chess);
         sfRenderWindow_display(window);
     }
