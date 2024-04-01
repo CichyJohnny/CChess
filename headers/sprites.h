@@ -3,7 +3,11 @@
 #ifndef SPRITES_H
 #define SPRITES_H
 
-// Create sprite and load its texture for given chess piece
+/*
+sfSprite function for creating sprite for given piece and position
+- for every piece is created texture from file
+- textures are stored in directory figures/ in 128x128px resolution
+*/
 sfSprite* createSprite(sfVector2f position, char name) {
     sfSprite* sprite = sfSprite_create();
     sfSprite_setPosition(sprite, position);
@@ -40,7 +44,9 @@ sfSprite* createSprite(sfVector2f position, char name) {
     return sprite;
 }
 
-// Render pieces on a chessboard
+/*
+Simple void function for rendering every sprite on 8x8 chessboard
+*/
 void drawFigures(sfRenderWindow* window, struct figure chess[8][8]) {
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {

@@ -2,6 +2,7 @@
 #include "headers/sprites.h"
 #include "headers/chessboard.h"
 #include "headers/moveboard.h"
+#include "headers/chess_events.h"
 
 int main() {
     // Window setting
@@ -18,7 +19,9 @@ int main() {
     game.turn = 1;
 
     // Define empty square
-    struct figure empty = {'.', NULL, 0};
+    int dummy[8][8];
+    clearBoard(dummy);
+    struct figure empty = {'.', NULL, 0, dummy, 0};
     
     // Start position init
     char figures[8][8] = {
@@ -83,7 +86,7 @@ int main() {
                         // Check if it't player's turn
                         if (isWhiteBlack(chess[mousePos.y][mousePos.x].name) == game.turn) {
                             selectedPiece = mousePos;
-                            canmove(window, chess, mousePos, moveBoard);
+                            canMove(chess, mousePos, moveBoard);
                         }
                     }
                     // Check if move is right
@@ -94,14 +97,14 @@ int main() {
                     // Moving the selected piece
                     else {
                         struct figure moveName = chess[selectedPiece.y][selectedPiece.x];
-                        chess[selectedPiece.y][selectedPiece.x] = empty; // Clear square
-                        chess[mousePos.y][mousePos.x] = moveName; // Movie piece
+                        chess[selectedPiece.y][selectedPiece.x] = empty; // clear square
+                        chess[mousePos.y][mousePos.x] = moveName; // movie piece
                         clearBoard(moveBoard);
 
-                        selectedPiece = (sfVector2i){-1, -1}; // Deselect a piece
+                        selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
 
-                        game.turn = -game.turn; // Change players
-                        moveName.num++; // +1 to number of times a piece was moved (espiecially for pawns)
+                        game.turn = -game.turn; // change players
+                        chess[mousePos.y][mousePos.x].num++; // +1 to number of times a piece was moved (espiecially for pawns)
                     }
                 }
             }

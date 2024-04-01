@@ -5,11 +5,13 @@
 #ifndef MOVEBOARD_H
 #define MOVEBOARD_H
 
-void canmove(sfRenderWindow* window, struct figure chess[8][8], sfVector2i position, int moveBoard[8][8]) {
+/*
+Void function that checks possible moves by calling function for selected piece
+*/
+void canMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8]) {
     int x = position.x, y = position.y;
     struct figure figure = chess[y][x];
 
-    
     if (figure.name == 'P' || figure.name == 'p') {
         pawnMove(chess, position, moveBoard);
     } else if (figure.name == 'N' || figure.name == 'n') {
@@ -25,6 +27,9 @@ void canmove(sfRenderWindow* window, struct figure chess[8][8], sfVector2i posit
     }
 }
 
+/*
+Void function that render green squares representing possible moves for selected piece
+*/
 void drawMoves(sfRenderWindow* window, int moveBoard[8][8]) {
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
@@ -41,6 +46,9 @@ void drawMoves(sfRenderWindow* window, int moveBoard[8][8]) {
     }    
 }
 
+/*
+Simple void function that changes every int in 2d moveBoard to 0
+*/
 void clearBoard(int board[8][8]) {
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
@@ -48,5 +56,17 @@ void clearBoard(int board[8][8]) {
         }
     }
 }
+
+void allMoves(struct figure chess[8][8]) {
+    sfVector2i position;
+
+    for (int i=0; i<8; i++) {
+        for (int j=0; j<8; j++) {
+            position = (sfVector2i){j, i};
+            canMove(chess, position, chess[i][j].moveBoard);
+        }
+    }
+}
+
 
 #endif

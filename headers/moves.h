@@ -161,7 +161,7 @@ Void function that updates moveBoard array with selected bishop's moves
 void bishopMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8]) {
     int x = position.x, y = position.y;
     struct figure figure = chess[y][x];
-    int color = isWhiteBlack(chess[y][x].name);
+    int color = isWhiteBlack(figure.name);
     int name;
 
     // Iteration top left
@@ -245,6 +245,7 @@ void kingMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8
         vec_y = y + dirs[i].y;
         if (vec_y >= 0 && vec_x >= 0 && vec_y <= 7 && vec_x <= 7 && isWhiteBlack(chess[vec_y][vec_x].name) != color) {
             moveBoard[vec_y][vec_x] = 1;
+            figure.possible_moves++;
         }
     }
 }
