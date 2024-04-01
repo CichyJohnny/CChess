@@ -11,16 +11,16 @@ int main() {
 
     // Chessboard init
     sfRectangleShape* squares[8][8];
-
     defineChessBoard(squares);
 
+    // Define game rules
     struct game game;
     game.turn = 1;
 
+    // Define empty square
     struct figure empty = {'.', NULL, 0};
     
-    // Figures init
-
+    // Start position init
     char figures[8][8] = {
         {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
         {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
@@ -32,6 +32,7 @@ int main() {
         {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
         };
     
+    // Figures init
     struct figure chess[8][8];
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
@@ -49,10 +50,12 @@ int main() {
         }
     }
 
+    // Move boeard init
     int moveBoard[8][8];
     clearBoard(moveBoard);
 
-    sfVector2i selectedPiece = {-1, -1}; // To store the selected piece position
+    // To store the selected piece position
+    sfVector2i selectedPiece = {-1, -1};
 
     // Game loop
     while (sfRenderWindow_isOpen(window)) {
@@ -74,26 +77,31 @@ int main() {
             else if (event.type == sfEvtMouseButtonPressed) {
                 if (event.mouseButton.button == sfMouseLeft) {
                     sfVector2i mousePos = {event.mouseButton.x / SQUARE_SIZE, event.mouseButton.y / SQUARE_SIZE};
+
+                    // Selecting a piece
                     if (selectedPiece.x == -1) {
-                        // Selecting a piece
+                        // Check if it't player's turn
                         if (isWhiteBlack(chess[mousePos.y][mousePos.x].name) == game.turn) {
                             selectedPiece = mousePos;
                             canmove(window, chess, mousePos, moveBoard);
                         }
-                    } else if (moveBoard[mousePos.y][mousePos.x] == 0) {
-                        // Check if move is right
+                    }
+                    // Check if move is right
+                    else if (moveBoard[mousePos.y][mousePos.x] == 0) {
                         selectedPiece = (sfVector2i){-1, -1};
                         clearBoard(moveBoard);
-                    } else {
-                        // Moving the selected piece
+                    } 
+                    // Moving the selected piece
+                    else {
                         struct figure moveName = chess[selectedPiece.y][selectedPiece.x];
-                        moveName.num++;
-                        chess[selectedPiece.y][selectedPiece.x] = empty;
-                        chess[mousePos.y][mousePos.x] = moveName;
-                        selectedPiece = (sfVector2i){-1, -1}; // Deselecting the piece
+                        chess[selectedPiece.y][selectedPiece.x] = empty; // Clear square
+                        chess[mousePos.y][mousePos.x] = moveName; // Movie piece
                         clearBoard(moveBoard);
-                        game.turn = -game.turn;
-                        
+
+                        selectedPiece = (sfVector2i){-1, -1}; // Deselect a piece
+
+                        game.turn = -game.turn; // Change players
+                        moveName.num++; // +1 to number of times a piece was moved (espiecially for pawns)
                     }
                 }
             }

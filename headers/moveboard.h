@@ -9,11 +9,7 @@ void canmove(sfRenderWindow* window, struct figure chess[8][8], sfVector2i posit
     int x = position.x, y = position.y;
     struct figure figure = chess[y][x];
 
-    for (int i=0; i<8; i++) {
-        for (int j=0; j<8; j++) {
-            moveBoard[i][j] = 0;
-        }
-    }
+    
     if (figure.name == 'P' || figure.name == 'p') {
         pawnMove(chess, position, moveBoard);
     } else if (figure.name == 'N' || figure.name == 'n') {
