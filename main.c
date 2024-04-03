@@ -16,7 +16,10 @@ int main() {
 
     // Define game rules
     struct game game;
+    struct game *gameptr = &game;
     game.turn = 1;
+    clearBoard(game.whiteBoard);
+    clearBoard(game.blackBoard);
 
     // Define empty square
     int dummy[8][8];
@@ -48,7 +51,7 @@ int main() {
         }
     }
 
-    allMoves(chess);
+    allMoves(chess, gameptr);
 
     // Move boeard init
     int moveBoard[8][8];
@@ -108,7 +111,19 @@ int main() {
 
                         spritesUpdate(chess);
 
-                        allMoves(chess);
+                        allMoves(chess, gameptr);
+
+                        for (int i=0; i<8;i++) {
+                            for (int j=0; j<8;j++) {
+                                printf("%d ", (*gameptr).whiteBoard[i][j]);
+                            } printf("\n");
+                        } printf("\n");
+
+                        for (int i=0; i<8;i++) {
+                            for (int j=0; j<8;j++) {
+                                printf("%d ", (*gameptr).blackBoard[i][j]);
+                            } printf("\n");
+                        } printf("\n");
                     }
                 }
             }

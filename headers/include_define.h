@@ -13,7 +13,7 @@ struct figure {
     char name; // bts name
     sfSprite* sprite; // its sprite
     int num; // times of being moved
-    int moveBoard[8][8];
+    int moveBoard[8][8]; // moveBoard of possible moves
     int possible_moves; // number of possible moves
 };
 
@@ -21,6 +21,8 @@ struct figure {
 struct game {
     int turn; // which player it's turn (1 if white's, -1 if black's)
     int win; // 0 if game is still on, 1 if white won, -1 if black won, 2 if pat
+    int whiteBoard[8][8];
+    int blackBoard[8][8];
 };
 
 #endif

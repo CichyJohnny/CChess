@@ -31,35 +31,43 @@ Void function that updates moveBoard array with selected pawn's moves
 - if first move and if nothing is ahead, then updates moveBoard
 - if enemy is in diagonal front square, updates moveboard
 */
-void pawnMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8]) {
+void pawnMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8], struct game *game) {
     int x = position.x, y = position.y;
     struct figure figure = chess[y][x];
 
     if (figure.name == 'P') {
         if (y - 1 >= 0 && chess[y - 1][x].name == '.') {   
             moveBoard[y - 1][x] = 1;
+            (*game).whiteBoard[y - 1][x] = 1;
             if (figure.num == 0  && chess[y - 2][x].name == '.') {
                 moveBoard[y - 2][x] = 1;
+                (*game).whiteBoard[y - 2][x] = 1;
             }
         }
         if (y - 1 >= 0 && x - 1 >= 0 && isWhiteBlack(chess[y - 1][x - 1].name) == -1) {
             moveBoard[y - 1][x - 1] = 1;
+            (*game).whiteBoard[y - 1][x - 1] = 1;
         }
         if (y - 1 >= 0 && x + 1 <= 7 && isWhiteBlack(chess[y - 1][x + 1].name) == -1) {
             moveBoard[y - 1][x + 1] = 1;
+            (*game).whiteBoard[y - 1][x + 1] = 1;
         }
     } else {
         if (y + 1 <= 7 && chess[y + 1][x].name == '.') {   
             moveBoard[y + 1][x] = 1;
+            (*game).blackBoard[y + 1][x] = 1;
             if (figure.num == 0  && chess[y + 2][x].name == '.') {
                 moveBoard[y + 2][x] = 1;
+                (*game).blackBoard[y + 2][x] = 1;
             }
         }
         if (y + 1 <= 7 && x - 1 >= 0 && isWhiteBlack(chess[y + 1][x - 1].name) == 1) {
             moveBoard[y + 1][x - 1] = 1;
+            (*game).blackBoard[y + 1][x - 1] = 1;
         }
         if (y + 1 <= 7 && x + 1 <= 7 && isWhiteBlack(chess[y + 1][x + 1].name) == 1) {
             moveBoard[y + 1][x + 1] = 1;
+            (*game).blackBoard[y + 1][x + 1] = 1;
         }
     } 
 }
@@ -69,7 +77,7 @@ Void function that updates moveBoard array with selected knight's moves
 - function iterates through eight possible moves
 - if move is on board and alliant is not attacked, updates moveboard
 */
-void knightMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8]) {
+void knightMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8], struct game *game) {
     int x = position.x, y = position.y;
     struct figure figure = chess[y][x];
     int color = isWhiteBlack(chess[y][x].name);
@@ -82,6 +90,8 @@ void knightMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8]
         vec_y = y + dirs[i].y;
         if (vec_y >= 0 && vec_x >= 0 && vec_y <= 7 && vec_x <= 7 && isWhiteBlack(chess[vec_y][vec_x].name) != color) {
             moveBoard[vec_y][vec_x] = 1;
+
+            if (color == 1) {(*game).whiteBoard[vec_y][vec_x] = 1;} else {(*game).blackBoard[vec_y][vec_x] = 1;}
         }
     }
 }
@@ -92,7 +102,7 @@ Void function that updates moveBoard array with selected rook's moves
 - if something in the way or outside chessboard, breaks
 - otherwise, updates moveBoard
 */
-void rookMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8]) {
+void rookMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8], struct game *game) {
     int x = position.x, y = position.y;
     struct figure figure = chess[y][x];
     int color = isWhiteBlack(chess[y][x].name);
@@ -106,9 +116,12 @@ void rookMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8
             break;
         } else if (name == -color) {
             moveBoard[y][x - i] = 1;
+            if (color == 1) {(*game).whiteBoard[y][x - i] = 1;} else {(*game).blackBoard[y][x - i] = 1;}
+
             break;
         } else {
             moveBoard[y][x - i] = 1;
+            if (color == 1) {(*game).whiteBoard[y][x - i] = 1;} else {(*game).blackBoard[y][x - i] = 1;}
         }
     }
     // Iteration to the right
@@ -119,9 +132,12 @@ void rookMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8
             break;
         } else if (name == -color) {
             moveBoard[y][x + i] = 1;
+            if (color == 1) {(*game).whiteBoard[y][x + i] = 1;} else {(*game).blackBoard[y][x + i] = 1;}
+
             break;
         } else {
             moveBoard[y][x + i] = 1;
+            if (color == 1) {(*game).whiteBoard[y][x +- i] = 1;} else {(*game).blackBoard[y][x + i] = 1;}
         }
     }
     // Iteration upwards
@@ -132,9 +148,13 @@ void rookMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8
             break;
         } else if (name == -color) {
             moveBoard[y - i][x] = 1;
+            if (color == 1) {(*game).whiteBoard[y - i][x] = 1;} else {(*game).blackBoard[y - i][x] = 1;}
+
             break;
         } else {
             moveBoard[y - i][x] = 1;
+            if (color == 1) {(*game).whiteBoard[y - i][x] = 1;} else {(*game).blackBoard[y - i][x] = 1;}
+
         }
     }
     // Iteration downwards
@@ -145,9 +165,12 @@ void rookMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8
             break;
         } else if (name == -color) {
             moveBoard[y + i][x] = 1;
+            if (color == 1) {(*game).whiteBoard[y + i][x] = 1;} else {(*game).blackBoard[y + i][x] = 1;}
+
             break;
         } else {
             moveBoard[y + i][x] = 1;
+            if (color == 1) {(*game).whiteBoard[y + i][x] = 1;} else {(*game).blackBoard[y + i][x] = 1;}
         }
     }
 }
@@ -158,7 +181,7 @@ Void function that updates moveBoard array with selected bishop's moves
 - if something in the way or outside chessboard, breaks
 - otherwise, updates moveBoard
 */
-void bishopMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8]) {
+void bishopMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8], struct game *game) {
     int x = position.x, y = position.y;
     struct figure figure = chess[y][x];
     int color = isWhiteBlack(figure.name);
@@ -172,9 +195,12 @@ void bishopMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8]
             break;
         } else if (name == -color) {
             moveBoard[y - i][x - i] = 1;
+            if (color == 1) {(*game).whiteBoard[y - i][x - i] = 1;} else {(*game).blackBoard[y - i][x - i] = 1;}
+
             break;
         } else {
             moveBoard[y - i][x - i] = 1;
+            if (color == 1) {(*game).whiteBoard[y - i][x - i] = 1;} else {(*game).blackBoard[y - i][x - i] = 1;}
         }
     }
     // Iteration top right
@@ -185,9 +211,12 @@ void bishopMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8]
             break;
         } else if (name == -color) {
             moveBoard[y - i][x + i] = 1;
+            if (color == 1) {(*game).whiteBoard[y - i][x + i] = 1;} else {(*game).blackBoard[y - i][x + i] = 1;}
+
             break;
         } else {
             moveBoard[y - i][x + i] = 1;
+            if (color == 1) {(*game).whiteBoard[y - i][x + i] = 1;} else {(*game).blackBoard[y - i][x + i] = 1;}
         }
     }
     // Iteration down right
@@ -198,9 +227,12 @@ void bishopMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8]
             break;
         } else if (name == -color) {
             moveBoard[y + i][x + i] = 1;
+            if (color == 1) {(*game).whiteBoard[y + i][x + i] = 1;} else {(*game).blackBoard[y + i][x + i] = 1;}
+
             break;
         } else {
             moveBoard[y + i][x + i] = 1;
+            if (color == 1) {(*game).whiteBoard[y + i][x + i] = 1;} else {(*game).blackBoard[y + i][x + i] = 1;}
         }
     }
     // Iteration down left
@@ -211,9 +243,12 @@ void bishopMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8]
             break;
         } else if (name == -color) {
             moveBoard[y + i][x - i] = 1;
+            if (color == 1) {(*game).whiteBoard[y + i][x - i] = 1;} else {(*game).blackBoard[y + i][x - i] = 1;}
+
             break;
         } else {
             moveBoard[y + i][x - i] = 1;
+            if (color == 1) {(*game).whiteBoard[y + i][x - i] = 1;} else {(*game).blackBoard[y + i][x - i] = 1;}
         }
     }
 }
@@ -222,9 +257,9 @@ void bishopMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8]
 Void function that updates moveBoard array with selected queen's moves
 - function updates moveBoard with combination of rook's and bishop's moves
 */
-void queenMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8]) {
-    rookMove(chess, position, moveBoard);
-    bishopMove(chess, position, moveBoard);
+void queenMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8], struct game *game) {
+    rookMove(chess, position, moveBoard, game);
+    bishopMove(chess, position, moveBoard, game);
 }
 
 /*
@@ -232,7 +267,7 @@ Void function that updates moveBoard array with selected kings's moves
 - function iterates through eight possible moves
 - if move is on board and alliant is not attacked, updates moveboard
 */
-void kingMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8]) {
+void kingMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8], struct game *game) {
     int x = position.x, y = position.y;
     struct figure figure = chess[y][x];
     int color = isWhiteBlack(chess[y][x].name);
@@ -245,6 +280,8 @@ void kingMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8
         vec_y = y + dirs[i].y;
         if (vec_y >= 0 && vec_x >= 0 && vec_y <= 7 && vec_x <= 7 && isWhiteBlack(chess[vec_y][vec_x].name) != color) {
             moveBoard[vec_y][vec_x] = 1;
+            if (color == 1) {(*game).whiteBoard[vec_y][vec_x] = 1;} else {(*game).blackBoard[vec_y][vec_x] = 1;}
+
             figure.possible_moves++;
         }
     }
