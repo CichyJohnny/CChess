@@ -57,16 +57,16 @@ void drawFigures(sfRenderWindow* window, struct figure chess[8][8]) {
     }
 }
 
-void spritesUpdate(struct figure chess[8][8]) {
+void spritesUpdate(struct figure (*chess)[8][8]) {
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
-            sfSprite_destroy(chess[i][j].sprite);
+            sfSprite_destroy((*chess)[i][j].sprite);
             
             sfVector2f position = {j * SQUARE_SIZE, i * SQUARE_SIZE};
 
-            chess[i][j].sprite = createSprite(position, chess[i][j].name);
+            (*chess)[i][j].sprite = createSprite(position, (*chess)[i][j].name);
             // I have no idea why i have to create new sprite instead of just changing the sprite's position
-            // sfSprite_setPosition(chess[i][j].sprite, position);
+            // sfSprite_setPosition((*chess)[i][j].sprite, position);
             
         }
     }

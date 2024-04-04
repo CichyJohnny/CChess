@@ -8,22 +8,22 @@
 /*
 Void function that checks possible moves by calling function for selected piece
 */
-void canMove(struct figure chess[8][8], sfVector2i position, int moveBoard[8][8], struct game *game) {
+void canMove(struct figure (*chessPtr)[8][8], sfVector2i position, int moveBoard[8][8], struct game *gamePtr) {
     int x = position.x, y = position.y;
-    struct figure figure = chess[y][x];
+    struct figure *figure = &(*chessPtr)[y][x];
 
-    if (figure.name == 'P' || figure.name == 'p') {
-        pawnMove(chess, position, moveBoard, game);
-    } else if (figure.name == 'N' || figure.name == 'n') {
-        knightMove(chess, position, moveBoard, game);
-    } else if (figure.name == 'R' || figure.name == 'r') {
-        rookMove(chess, position, moveBoard, game);
-    } else if (figure.name == 'B' || figure.name == 'b') {
-        bishopMove(chess, position, moveBoard, game);
-    } else if (figure.name == 'Q' || figure.name == 'q') {
-        queenMove(chess, position, moveBoard, game);
-    } else if (figure.name == 'K' || figure.name == 'k') {
-        kingMove(chess, position, moveBoard, game);
+    if (figure->name == 'P' || figure->name == 'p') {
+        pawnMove(chessPtr, position, gamePtr);
+    } else if (figure->name == 'N' || figure->name == 'n') {
+        knightMove(chessPtr, position, gamePtr);
+    } else if (figure->name == 'R' || figure->name == 'r') {
+        rookMove(chessPtr, position, gamePtr);
+    } else if (figure->name == 'B' || figure->name == 'b') {
+        bishopMove(chessPtr, position, gamePtr);
+    } else if (figure->name == 'Q' || figure->name == 'q') {
+        queenMove(chessPtr, position, gamePtr);
+    } else if (figure->name == 'K' || figure->name == 'k') {
+        kingMove(chessPtr, position, gamePtr);
     }
 }
 
@@ -57,19 +57,18 @@ void clearBoard(int board[8][8]) {
     }
 }
 
-void allMoves(struct figure chess[8][8], struct game *game) {
+void allMoves(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
     sfVector2i position;
 
-    clearBoard((*game).whiteBoard);
-    clearBoard((*game).blackBoard);
+    clearBoard(gamePtr->whiteBoard);
+    clearBoard(gamePtr->blackBoard);
 
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
             position = (sfVector2i){j, i};
-            clearBoard(chess[i][j].moveBoard);
+            clearBoard((*chessPtr)[i][j].moveBoard);
 
-            canMove(chess, position, chess[i][j].moveBoard, game);
-
+            canMove(chessPtr, position, (*chessPtr)[i][j].moveBoard, gamePtr);
         }
     }
 }

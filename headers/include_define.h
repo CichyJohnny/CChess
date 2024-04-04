@@ -23,6 +23,8 @@ struct game {
     int win; // 0 if game is still on, 1 if white won, -1 if black won, 2 if pat
     int whiteBoard[8][8];
     int blackBoard[8][8];
+    int event;
+    int stopRecur;
 };
 
 #endif

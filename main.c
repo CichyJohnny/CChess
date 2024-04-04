@@ -16,8 +16,10 @@ int main() {
 
     // Define game rules
     struct game game;
-    struct game *gameptr = &game;
+    struct game *gamePtr = &game;
     game.turn = 1;
+    game.event = 0;
+    game.stopRecur = 0;
     clearBoard(game.whiteBoard);
     clearBoard(game.blackBoard);
 
@@ -40,6 +42,10 @@ int main() {
     
     // Figures init
     struct figure chess[8][8];
+    struct figure (*chessPtr)[8][8] = &chess;
+
+    struct figure prevChess[8][8];
+    struct figure (*prevChessPtr)[8][8] = &prevChess;
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
             char name = figures[i][j];
@@ -51,13 +57,12 @@ int main() {
         }
     }
 
-    allMoves(chess, gameptr);
+    allMoves(chessPtr, gamePtr);
 
     // Move boeard init
     int moveBoard[8][8];
-    clearBoard(moveBoard);
-
     int (*move)[8][8] = &moveBoard;
+    clearBoard(moveBoard);
 
     // To store the selected piece position
     sfVector2i selectedPiece = {-1, -1};
@@ -96,34 +101,24 @@ int main() {
                     else if ((*move)[mousePos.y][mousePos.x] == 0) {
                         selectedPiece = (sfVector2i){-1, -1};
                         move = &moveBoard;
-                    } 
+                    }
                     // Moving the selected piece
                     else {
                         struct figure movePiece = chess[selectedPiece.y][selectedPiece.x];
                         chess[selectedPiece.y][selectedPiece.x] = empty; // clear square
                         chess[mousePos.y][mousePos.x] = movePiece; // movie piece
                         clearBoard(*move);
-
                         selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
 
+                        allMoves(chessPtr, gamePtr);
+
                         game.turn = -game.turn; // change players
+                        game.event = 0;
                         chess[mousePos.y][mousePos.x].num++; // +1 to number of times a piece was moved (espiecially for pawns)
 
-                        spritesUpdate(chess);
+                        allMoves(chessPtr, gamePtr);
 
-                        allMoves(chess, gameptr);
-
-                        for (int i=0; i<8;i++) {
-                            for (int j=0; j<8;j++) {
-                                printf("%d ", (*gameptr).whiteBoard[i][j]);
-                            } printf("\n");
-                        } printf("\n");
-
-                        for (int i=0; i<8;i++) {
-                            for (int j=0; j<8;j++) {
-                                printf("%d ", (*gameptr).blackBoard[i][j]);
-                            } printf("\n");
-                        } printf("\n");
+                        spritesUpdate(chessPtr);
                     }
                 }
             }
