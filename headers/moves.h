@@ -130,6 +130,7 @@ void rookMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game 
                 }   
 
                 break;
+
             } else {
                 figure->moveBoard[y + j*vec_y][x + j*vec_x] = 1;
                 if (color == 1) {
@@ -178,6 +179,7 @@ void bishopMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct gam
                 }   
 
                 break;
+                
             } else {
                 figure->moveBoard[y + j*vec_y][x + j*vec_x] = 1;
                 
@@ -211,48 +213,62 @@ void kingMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game 
     int color = isWhiteBlack(figure->name);
 
     sfVector2i dirs[8] = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
-    int vec_x, vec_y;
+    int vec_x, vec_y, check;
+
+    struct figure nextChess[8][8];
+    struct figure (*nextChessPtr)[8][8] = &nextChess;
+
+    struct figure movePiece;
+    struct figure empty = {'.', NULL, 0};
+
+    struct game copyGame = *gamePtr;
+    copyGame.stopRecur = 1;
+    struct game *copyGamePtr = &copyGame;
+    
 
     for (int i=0; i<8; i++) {
         vec_x = x + dirs[i].x;
         vec_y = y + dirs[i].y;
-        if (vec_y >= 0 && vec_x >= 0 && vec_y <= 7 && vec_x <= 7 && isWhiteBlack((*chessPtr)[vec_y][vec_x].name) != color) {
-            if (gamePtr->stopRecur == 0) {
-                // For stopping recursive calling
+        if (color == 1) {gamePtr->whiteBoard[vec_y][vec_x] = 1;} else {gamePtr->blackBoard[vec_y][vec_x] = 1;}
+    }
+    
+
+    for (int i=0; i<8; i++) {
+        vec_x = x + dirs[i].x;
+        vec_y = y + dirs[i].y;
+
+        if (gamePtr->stopRecur == 0) {
+
+            if (vec_y >= 0 && vec_x >= 0 && vec_y <= 7 && vec_x <= 7 && isWhiteBlack((*chessPtr)[vec_y][vec_x].name) != color) {
 
                 if (gamePtr->event == 0) {
-                    //
-
                     // Copy of chess list
-                    struct figure nextChess[8][8];
-                    struct figure (*nextChessPtr)[8][8] = &nextChess;
                     copyChess(chessPtr, nextChessPtr);
 
                     // Moving piece on copied board
-                    struct figure movePiece = nextChess[y][x];
-                    struct figure empty = {'.', NULL, 0};
+                    movePiece = nextChess[y][x];
                     nextChess[y][x] = empty; // clear square
                     nextChess[vec_y][vec_x] = movePiece; // movie piece
 
                     // Computing all moves after the move
-                    struct game copyGame = *gamePtr;
-                    copyGame.stopRecur = 1;
-                    struct game *copyGamePtr = &copyGame;
                     allMoves(nextChessPtr, copyGamePtr);
 
                     // We check if there is a check after the move
-                    int check = isCheck(nextChessPtr, copyGamePtr);
+                    check = isCheck(nextChessPtr, copyGamePtr);
 
                     if (check == color) {
                         // You are checked
                         // Discard changes
+                        nextChess[y][x] = movePiece; // revert move
+                        nextChess[vec_y][vec_x] = empty; // revert move
                         continue;
                     }
                 }
+                if ((color == 1 && gamePtr->blackBoard[vec_y][vec_x] == 0) || (color == -1 && gamePtr->whiteBoard[vec_y][vec_x] == 0)) {
+                    figure->moveBoard[vec_y][vec_x] = 1;
+                    figure->possible_moves++;
+                }
             }
-            figure->moveBoard[vec_y][vec_x] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[vec_y][vec_x] = 1;} else {(*gamePtr).blackBoard[vec_y][vec_x] = 1;}
-            figure->possible_moves++;
         }
     }
 }

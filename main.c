@@ -20,6 +20,7 @@ int main() {
     game.turn = 1;
     game.event = 0;
     game.stopRecur = 0;
+    game.possible_moves = 0;
     clearBoard(game.whiteBoard);
     clearBoard(game.blackBoard);
 
@@ -39,7 +40,18 @@ int main() {
         {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
         {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
         };
-    
+    // char figures[8][8] = {
+    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
+    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
+    //     {'.', '.', '.', '.', 'K', '.', '.', '.'},
+    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
+    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
+    //     {'.', '.', '.', '.', 'k', '.', '.', '.'},
+    //     {'.', '.', '.', '.', '.', '.', 'R', '.'},
+    //     {'.', '.', '.', '.', '.', '.', '.', '.'}
+    //     };
+
+
     // Figures init
     struct figure chess[8][8];
     struct figure (*chessPtr)[8][8] = &chess;
@@ -60,9 +72,9 @@ int main() {
     allMoves(chessPtr, gamePtr);
 
     // Move boeard init
-    int moveBoard[8][8];
-    int (*move)[8][8] = &moveBoard;
-    clearBoard(moveBoard);
+    int emptyBoard[8][8];
+    int (*move)[8][8] = &emptyBoard;
+    clearBoard(emptyBoard);
 
     // To store the selected piece position
     sfVector2i selectedPiece = {-1, -1};
@@ -93,14 +105,13 @@ int main() {
                         // Check if it't player's turn
                         if (isWhiteBlack(chess[mousePos.y][mousePos.x].name) == game.turn) {
                             selectedPiece = mousePos;
-                            // canMove(chess, mousePos, moveBoard);
                             move = &(chess[mousePos.y][mousePos.x].moveBoard);
                         }
                     }
                     // Check if move is right
                     else if ((*move)[mousePos.y][mousePos.x] == 0) {
                         selectedPiece = (sfVector2i){-1, -1};
-                        move = &moveBoard;
+                        move = &emptyBoard;
                     }
                     // Moving the selected piece
                     else {
@@ -119,6 +130,20 @@ int main() {
                         allMoves(chessPtr, gamePtr);
 
                         spritesUpdate(chessPtr);
+
+                        int check = isCheck(chessPtr, gamePtr);
+                        if (check != 0) {
+                            printf("Check\n");
+                            game.event = 1;
+
+                            escapeCheck(chessPtr, gamePtr, check);
+                            if (game.possible_moves == 0) {
+                                printf("Mate\n");
+                            } else {
+                                printf("%d", game.possible_moves);
+                                game.possible_moves = 0;
+                            }
+                        }
                     }
                 }
             }

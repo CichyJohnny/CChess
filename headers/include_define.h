@@ -25,6 +25,7 @@ struct game {
     int blackBoard[8][8];
     int event;
     int stopRecur;
+    int possible_moves;
 };
 
 #endif
