@@ -38,36 +38,36 @@ void pawnMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game 
     if (figure->name == 'P') {
         if (y - 1 >= 0 && (*chessPtr)[y - 1][x].name == '.') {   
             figure->moveBoard[y - 1][x] = 1;
-            (*gamePtr).whiteBoard[y - 1][x] = 1;
+            gamePtr->whiteBoard[y - 1][x] = 1;
             if (figure->num == 0  && (*chessPtr)[y - 2][x].name == '.') {
                 figure->moveBoard[y - 2][x] = 1;
-                (*gamePtr).whiteBoard[y - 2][x] = 1;
+                gamePtr->whiteBoard[y - 2][x] = 1;
             }
         }
         if (y - 1 >= 0 && x - 1 >= 0 && isWhiteBlack((*chessPtr)[y - 1][x - 1].name) == -1) {
             figure->moveBoard[y - 1][x - 1] = 1;
-            (*gamePtr).whiteBoard[y - 1][x - 1] = 1;
+            gamePtr->whiteBoard[y - 1][x - 1] = 1;
         }
         if (y - 1 >= 0 && x + 1 <= 7 && isWhiteBlack((*chessPtr)[y - 1][x + 1].name) == -1) {
             figure->moveBoard[y - 1][x + 1] = 1;
-            (*gamePtr).whiteBoard[y - 1][x + 1] = 1;
+            gamePtr->whiteBoard[y - 1][x + 1] = 1;
         }
     } else {
         if (y + 1 <= 7 && (*chessPtr)[y + 1][x].name == '.') {   
             figure->moveBoard[y + 1][x] = 1;
-            (*gamePtr).blackBoard[y + 1][x] = 1;
+            gamePtr->blackBoard[y + 1][x] = 1;
             if (figure->num == 0  && (*chessPtr)[y + 2][x].name == '.') {
                 figure->moveBoard[y + 2][x] = 1;
-                (*gamePtr).blackBoard[y + 2][x] = 1;
+                gamePtr->blackBoard[y + 2][x] = 1;
             }
         }
         if (y + 1 <= 7 && x - 1 >= 0 && isWhiteBlack((*chessPtr)[y + 1][x - 1].name) == 1) {
             figure->moveBoard[y + 1][x - 1] = 1;
-            (*gamePtr).blackBoard[y + 1][x - 1] = 1;
+            gamePtr->blackBoard[y + 1][x - 1] = 1;
         }
         if (y + 1 <= 7 && x + 1 <= 7 && isWhiteBlack((*chessPtr)[y + 1][x + 1].name) == 1) {
             figure->moveBoard[y + 1][x + 1] = 1;
-            (*gamePtr).blackBoard[y + 1][x + 1] = 1;
+            gamePtr->blackBoard[y + 1][x + 1] = 1;
         }
     } 
 }
@@ -80,7 +80,7 @@ Void function that updates moveBoard array with selected knight's moves
 void knightMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game *gamePtr) {
     int x = position.x, y = position.y;
     struct figure *figure = &(*chessPtr)[y][x];
-    int color = isWhiteBlack((*chessPtr)[y][x].name);
+    int color = isWhiteBlack(figure->name);
 
     sfVector2i dirs[8] = {{-1, -2}, {-1, 2}, {1, -2}, {1, 2}, {-2, -1}, {-2, 1}, {2, -1}, {2, 1}};
     int vec_x, vec_y;
@@ -105,72 +105,40 @@ Void function that updates moveBoard array with selected rook's moves
 void rookMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game *gamePtr) {
     int x = position.x, y = position.y;
     struct figure *figure = &(*chessPtr)[y][x];
-    int color = isWhiteBlack((*chessPtr)[y][x].name);
+    int color = isWhiteBlack(figure->name);
     int name;
 
-    // Iteration to the left
-    for (int i=1; x - i >= 0; i++) {
-        name = isWhiteBlack((*chessPtr)[y][x - i].name);
+    sfVector2i dirs[4] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    int vec_x, vec_y;
 
-        if (name == color) {
-            break;
-        } else if (name == -color) {
-            figure->moveBoard[y][x - i] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y][x - i] = 1;} else {(*gamePtr).blackBoard[y][x - i] = 1;}
+    for (int i=0; i<4; i++) {
+        vec_x = dirs[i].x;
+        vec_y = dirs[i].y;
 
-            break;
-        } else {
-            figure->moveBoard[y][x - i] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y][x - i] = 1;} else {(*gamePtr).blackBoard[y][x - i] = 1;}
-        }
-    }
-    // Iteration to the right
-    for (int i=1; x + i <= 7; i++) {
-        name = isWhiteBlack((*chessPtr)[y][x + i].name);
+        for (int j=1; x + j*vec_x >=0 && x + j*vec_x < 8 && y + j*vec_y >=0 && y + j*vec_y < 8; j++) {
+            name = isWhiteBlack((*chessPtr)[y + j*vec_y][x + j*vec_x].name);
 
-        if (name == color) {
-            break;
-        } else if (name == -color) {
-            figure->moveBoard[y][x + i] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y][x + i] = 1;} else {(*gamePtr).blackBoard[y][x + i] = 1;}
+            if (name == color) {
+                break;
+            } else if (name == -color) {
+                figure->moveBoard[y + j*vec_y][x + j*vec_x] = 1;
 
-            break;
-        } else {
-            figure->moveBoard[y][x + i] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y][x +- i] = 1;} else {(*gamePtr).blackBoard[y][x + i] = 1;}
-        }
-    }
-    // Iteration upwards
-    for (int i=1; y - i >= 0; i++) {
-        name = isWhiteBlack((*chessPtr)[y - i][x].name);
+                if (color == 1) {
+                    (*gamePtr).whiteBoard[y + j*vec_y][x + j*vec_x] = 1;
+                } else {
+                    (*gamePtr).blackBoard[y + j*vec_y][x + j*vec_x] = 1;
+                }   
 
-        if (name == color) {
-            break;
-        } else if (name == -color) {
-            figure->moveBoard[y - i][x] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y - i][x] = 1;} else {(*gamePtr).blackBoard[y - i][x] = 1;}
-
-            break;
-        } else {
-            figure->moveBoard[y - i][x] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y - i][x] = 1;} else {(*gamePtr).blackBoard[y - i][x] = 1;}
-
-        }
-    }
-    // Iteration downwards
-    for (int i=1; y + i <= 7; i++) {
-        name = isWhiteBlack((*chessPtr)[y + i][x].name);
-
-        if (name == color) {
-            break;
-        } else if (name == -color) {
-            figure->moveBoard[y + i][x] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y + i][x] = 1;} else {(*gamePtr).blackBoard[y + i][x] = 1;}
-
-            break;
-        } else {
-            figure->moveBoard[y + i][x] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y + i][x] = 1;} else {(*gamePtr).blackBoard[y + i][x] = 1;}
+                break;
+            } else {
+                figure->moveBoard[y + j*vec_y][x + j*vec_x] = 1;
+                
+                if (color == 1) {
+                    (*gamePtr).whiteBoard[y + j*vec_y][x + j*vec_x] = 1;
+                } else {
+                    (*gamePtr).blackBoard[y + j*vec_y][x + j*vec_x] = 1;
+                }
+            }
         }
     }
 }
@@ -187,70 +155,106 @@ void bishopMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct gam
     int color = isWhiteBlack(figure->name);
     int name;
 
+
+    
+    sfVector2i dirs[4] = {{-1, -1}, {1, 1}, {-1, 1}, {1, -1}};
+    int vec_x, vec_y;
+
+    for (int i=0; i<4; i++) {
+        vec_x = dirs[i].x;
+        vec_y = dirs[i].y;
+
+        for (int j=1; x + j*vec_x >=0 && x + j*vec_x < 8 && y + j*vec_y >=0 && y + j*vec_y < 8; j++) {
+            name = isWhiteBlack((*chessPtr)[y + j*vec_y][x + j*vec_x].name);
+
+            if (name == color) {
+                break;
+            } else if (name == -color) {
+                figure->moveBoard[y + j*vec_y][x + j*vec_x] = 1;
+
+                if (color == 1) {
+                    (*gamePtr).whiteBoard[y + j*vec_y][x + j*vec_x] = 1;
+                } else {
+                    (*gamePtr).blackBoard[y + j*vec_y][x + j*vec_x] = 1;
+                }   
+
+                break;
+            } else {
+                figure->moveBoard[y + j*vec_y][x + j*vec_x] = 1;
+                
+                if (color == 1) {
+                    (*gamePtr).whiteBoard[y + j*vec_y][x + j*vec_x] = 1;
+                } else {
+                    (*gamePtr).blackBoard[y + j*vec_y][x + j*vec_x] = 1;
+                }
+            }
+        }
+    }
+
     // Iteration top left
-    for (int i=1; x - i >= 0 && y - i >= 0; i++) {
-        name = isWhiteBlack((*chessPtr)[y - i][x - i].name);
+    // for (int i=1; x - i >= 0 && y - i >= 0; i++) {
+    //     name = isWhiteBlack((*chessPtr)[y - i][x - i].name);
 
-        if (name == color) {
-            break;
-        } else if (name == -color) {
-            figure->moveBoard[y - i][x - i] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y - i][x - i] = 1;} else {(*gamePtr).blackBoard[y - i][x - i] = 1;}
+    //     if (name == color) {
+    //         break;
+    //     } else if (name == -color) {
+    //         figure->moveBoard[y - i][x - i] = 1;
+    //         if (color == 1) {(*gamePtr).whiteBoard[y - i][x - i] = 1;} else {(*gamePtr).blackBoard[y - i][x - i] = 1;}
 
-            break;
-        } else {
-            figure->moveBoard[y - i][x - i] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y - i][x - i] = 1;} else {(*gamePtr).blackBoard[y - i][x - i] = 1;}
-        }
-    }
-    // Iteration top right
-    for (int i=1; x + i <= 7 && y - i >= 0; i++) {
-        name = isWhiteBlack((*chessPtr)[y - i][x + i].name);
+    //         break;
+    //     } else {
+    //         figure->moveBoard[y - i][x - i] = 1;
+    //         if (color == 1) {(*gamePtr).whiteBoard[y - i][x - i] = 1;} else {(*gamePtr).blackBoard[y - i][x - i] = 1;}
+    //     }
+    // }
+    // // Iteration top right
+    // for (int i=1; x + i <= 7 && y - i >= 0; i++) {
+    //     name = isWhiteBlack((*chessPtr)[y - i][x + i].name);
 
-        if (name == color) {
-            break;
-        } else if (name == -color) {
-            figure->moveBoard[y - i][x + i] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y - i][x + i] = 1;} else {(*gamePtr).blackBoard[y - i][x + i] = 1;}
+    //     if (name == color) {
+    //         break;
+    //     } else if (name == -color) {
+    //         figure->moveBoard[y - i][x + i] = 1;
+    //         if (color == 1) {(*gamePtr).whiteBoard[y - i][x + i] = 1;} else {(*gamePtr).blackBoard[y - i][x + i] = 1;}
 
-            break;
-        } else {
-            figure->moveBoard[y - i][x + i] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y - i][x + i] = 1;} else {(*gamePtr).blackBoard[y - i][x + i] = 1;}
-        }
-    }
-    // Iteration down right
-    for (int i=1; x + i <= 7 && y + i <= 7; i++) {
-        name = isWhiteBlack((*chessPtr)[y + i][x + i].name);
+    //         break;
+    //     } else {
+    //         figure->moveBoard[y - i][x + i] = 1;
+    //         if (color == 1) {(*gamePtr).whiteBoard[y - i][x + i] = 1;} else {(*gamePtr).blackBoard[y - i][x + i] = 1;}
+    //     }
+    // }
+    // // Iteration down right
+    // for (int i=1; x + i <= 7 && y + i <= 7; i++) {
+    //     name = isWhiteBlack((*chessPtr)[y + i][x + i].name);
 
-        if (name == color) {
-            break;
-        } else if (name == -color) {
-            figure->moveBoard[y + i][x + i] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y + i][x + i] = 1;} else {(*gamePtr).blackBoard[y + i][x + i] = 1;}
+    //     if (name == color) {
+    //         break;
+    //     } else if (name == -color) {
+    //         figure->moveBoard[y + i][x + i] = 1;
+    //         if (color == 1) {(*gamePtr).whiteBoard[y + i][x + i] = 1;} else {(*gamePtr).blackBoard[y + i][x + i] = 1;}
 
-            break;
-        } else {
-            figure->moveBoard[y + i][x + i] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y + i][x + i] = 1;} else {(*gamePtr).blackBoard[y + i][x + i] = 1;}
-        }
-    }
-    // Iteration down left
-    for (int i=1; x - i >= 0 && y + i <= 7; i++) {
-        name = isWhiteBlack((*chessPtr)[y + i][x - i].name);
+    //         break;
+    //     } else {
+    //         figure->moveBoard[y + i][x + i] = 1;
+    //         if (color == 1) {(*gamePtr).whiteBoard[y + i][x + i] = 1;} else {(*gamePtr).blackBoard[y + i][x + i] = 1;}
+    //     }
+    // }
+    // // Iteration down left
+    // for (int i=1; x - i >= 0 && y + i <= 7; i++) {
+    //     name = isWhiteBlack((*chessPtr)[y + i][x - i].name);
 
-        if (name == color) {
-            break;
-        } else if (name == -color) {
-            figure->moveBoard[y + i][x - i] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y + i][x - i] = 1;} else {(*gamePtr).blackBoard[y + i][x - i] = 1;}
+    //     if (name == color) {
+    //         break;
+    //     } else if (name == -color) {
+    //         figure->moveBoard[y + i][x - i] = 1;
+    //         if (color == 1) {(*gamePtr).whiteBoard[y + i][x - i] = 1;} else {(*gamePtr).blackBoard[y + i][x - i] = 1;}
 
-            break;
-        } else {
-            figure->moveBoard[y + i][x - i] = 1;
-            if (color == 1) {(*gamePtr).whiteBoard[y + i][x - i] = 1;} else {(*gamePtr).blackBoard[y + i][x - i] = 1;}
-        }
-    }
+    //         break;
+    //     } else {
+    //         figure->moveBoard[y + i][x - i] = 1;
+    //         if (color == 1) {(*gamePtr).whiteBoard[y + i][x - i] = 1;} else {(*gamePtr).blackBoard[y + i][x - i] = 1;}
+    //     }
+    // }
 }
 
 /*
@@ -270,7 +274,7 @@ Void function that updates moveBoard array with selected kings's moves
 void kingMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game *gamePtr) {
     int x = position.x, y = position.y;
     struct figure *figure = &(*chessPtr)[y][x];
-    int color = isWhiteBlack((*chessPtr)[y][x].name);
+    int color = isWhiteBlack(figure->name);
 
     sfVector2i dirs[8] = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
     int vec_x, vec_y;
@@ -308,18 +312,7 @@ void kingMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game 
                     if (check == color) {
                         // You are checked
                         // Discard changes
-                        printf("you would be checked %d\n", color);
                         continue;
-
-                    } else if (check == -color) {
-                        // Enemy is checked
-                        printf("enemy is checked %d\n", color);
-                        // gamePtr->event = -color;
-
-                    } else {
-                        // No one is checked
-                        // Apply changes
-                        printf("normal move %d\n", color);
                     }
                 }
             }
