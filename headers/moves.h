@@ -133,6 +133,7 @@ void rookMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game 
 
             } else {
                 figure->moveBoard[y + j*vec_y][x + j*vec_x] = 1;
+
                 if (color == 1) {
                     (*gamePtr).whiteBoard[y + j*vec_y][x + j*vec_x] = 1;
                 } else {
@@ -266,11 +267,65 @@ void kingMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game 
                 }
                 if ((color == 1 && gamePtr->blackBoard[vec_y][vec_x] == 0) || (color == -1 && gamePtr->whiteBoard[vec_y][vec_x] == 0)) {
                     figure->moveBoard[vec_y][vec_x] = 1;
-                    figure->possible_moves++;
                 }
             }
         }
     }
+}
+
+void shortCastling(struct figure (*chessPtr)[8][8], sfVector2i position, struct game *gamePtr) {
+    int x = position.x, y = position.y;
+    struct figure *figure = &(*chessPtr)[y][x];
+    
+
+    if (figure->name == 'K' && x == 4 && y == 7 && (*chessPtr)[7][7].name == 'R') {
+        // King and rook are on positions
+
+        if (figure->num == 0 && (*chessPtr)[7][7].num == 0) {
+            // They were previously not moved
+
+            if ((*chessPtr)[7][5].name == '.' && (*chessPtr)[7][6].name == '.') {
+                // There are no pieces between
+
+                if (gamePtr->blackBoard[7][4] == 0 && gamePtr->blackBoard[7][5] == 0 && gamePtr->blackBoard[7][6] == 0) {
+                    // King and pieces between are not attacked
+
+                    figure->shortclash = 1;
+                }
+            }
+        }
+    } else if (figure->name == 'k' && x == 4 && y == 0 && (*chessPtr)[0][7].name == 'r') {
+        // King and rook are on positions
+
+        if (figure->num == 0 && (*chessPtr)[0][7].num == 0) {
+            // They were previously not moved
+
+            if ((*chessPtr)[0][5].name == '.' && (*chessPtr)[0][6].name == '.') {
+                // There are no pieces between
+
+                if (gamePtr->whiteBoard[0][4] == 0 && gamePtr->whiteBoard[0][5] == 0 && gamePtr->whiteBoard[0][6] == 0) {
+                    // King and pieces between are not attacked
+
+                    figure->shortclash = -1;
+                }
+            }
+        }
+    }
+}
+
+void doShortCastling(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
+    struct figure movePiece;
+    struct figure empty = {'.', NULL, 0};
+
+    // Move king
+    movePiece = (*chessPtr)[7][4];
+    (*chessPtr)[7][4] = empty;
+    (*chessPtr)[7][6] = movePiece;
+
+    // Move rook
+    movePiece = (*chessPtr)[7][7];
+    (*chessPtr)[7][7] = empty;
+    (*chessPtr)[7][5] = movePiece;
 }
 
 #endif

@@ -48,7 +48,7 @@ int main() {
     //     {'.', '.', '.', '.', '.', '.', '.', '.'},
     //     {'.', '.', '.', '.', 'k', '.', '.', '.'},
     //     {'.', '.', '.', '.', '.', '.', 'R', '.'},
-    //     {'.', '.', '.', '.', '.', '.', '.', '.'}
+    //     {'.', '.', '.', '.', 'K', '.', '.', 'R'}
     //     };
 
 
@@ -60,16 +60,18 @@ int main() {
     struct figure (*prevChessPtr)[8][8] = &prevChess;
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
-            char name = figures[i][j];
-
             sfVector2f position = {j * SQUARE_SIZE, i * SQUARE_SIZE};
-            chess[i][j].name = name;
+            chess[i][j].name = figures[i][j];
             chess[i][j].num = 0;
-            chess[i][j].sprite = createSprite(position, name);
+            chess[i][j].sprite = createSprite(position, figures[i][j]);
+            chess[i][j].shortclash = 0;
         }
     }
 
     allMoves(chessPtr, gamePtr);
+
+    struct figure movePiece;
+
 
     // Move boeard init
     int emptyBoard[8][8];
@@ -106,6 +108,15 @@ int main() {
                         if (isWhiteBlack(chess[mousePos.y][mousePos.x].name) == game.turn) {
                             selectedPiece = mousePos;
                             move = &(chess[mousePos.y][mousePos.x].moveBoard);
+
+                            if (chess[selectedPiece.y][selectedPiece.x].name == 'K' || chess[selectedPiece.y][selectedPiece.x].name == 'k') {
+                                shortCastling(chessPtr, selectedPiece, gamePtr);
+                                if (chess[selectedPiece.y][selectedPiece.x].shortclash == 1) {
+                                    (*move)[7][6] = 1;
+                                } else if (chess[selectedPiece.y][selectedPiece.x].shortclash == -1) {
+                                    (*move)[0][6] = 1;  
+                                }
+                            }
                         }
                     }
                     // Check if move is right
@@ -113,20 +124,82 @@ int main() {
                         selectedPiece = (sfVector2i){-1, -1};
                         move = &emptyBoard;
                     }
+
                     // Moving the selected piece
-                    else {
-                        struct figure movePiece = chess[selectedPiece.y][selectedPiece.x];
-                        chess[selectedPiece.y][selectedPiece.x] = empty; // clear square
-                        chess[mousePos.y][mousePos.x] = movePiece; // movie piece
-                        clearBoard(*move);
-                        selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
+                    else if (chess[selectedPiece.y][selectedPiece.x].shortclash == 1 && mousePos.x == 6 && mousePos.y == 7) {
+                        // Short black clash
+                        chess[selectedPiece.y][selectedPiece.x].shortclash = 0;
+
+                        // Move king
+                        movePiece = chess[7][4];
+                        sfSprite_destroy(chess[7][4].sprite);
+                        chess[7][4] = empty;
+                        chess[7][6] = movePiece;
+
+                        // Move rook
+                        movePiece = chess[7][7];
+                        sfSprite_destroy(chess[7][7].sprite);
+                        chess[7][7] = empty;
+                        chess[7][5] = movePiece;
 
                         allMoves(chessPtr, gamePtr);
 
                         game.turn = -game.turn; // change players
                         game.event = 0;
-                        chess[mousePos.y][mousePos.x].num++; // +1 to number of times a piece was moved (espiecially for pawns)
+                        chess[7][6].num++; // +1 to number of times a king was moved
+                        chess[7][5].num++; // +1 to number of times a rook was moved
+                        allMoves(chessPtr, gamePtr);
 
+                        move = &emptyBoard;;
+                        selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
+
+                        spritesUpdate(chessPtr);
+
+                    } else if (chess[selectedPiece.y][selectedPiece.x].shortclash == -1 && mousePos.x == 6 && mousePos.y == 0) {
+                        // Short white clash
+                        chess[selectedPiece.y][selectedPiece.x].shortclash = 0;
+
+                        // Move king
+                        movePiece = chess[0][4];
+                        sfSprite_destroy(chess[0][4].sprite);
+                        chess[0][4] = empty;
+                        chess[0][6] = movePiece;
+
+                        // Move rook
+                        movePiece = chess[0][7];
+                        sfSprite_destroy(chess[0][7].sprite);
+                        chess[0][7] = empty;
+                        chess[0][5] = movePiece;
+
+                        allMoves(chessPtr, gamePtr);
+
+                        game.turn = -game.turn; // change players
+                        game.event = 0;
+                        chess[0][6].num++; // +1 to number of times a king was moved
+                        chess[0][5].num++; // +1 to number of times a rook was moved
+                        allMoves(chessPtr, gamePtr);
+
+                        move = &emptyBoard;;
+                        selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
+
+                        spritesUpdate(chessPtr);
+
+                    } else {
+                        // Normal move
+                        movePiece = chess[selectedPiece.y][selectedPiece.x];
+                        sfSprite_destroy(chess[selectedPiece.y][selectedPiece.x].sprite);
+                        chess[selectedPiece.y][selectedPiece.x] = empty; // clear square
+                        chess[mousePos.y][mousePos.x] = movePiece; // movie piece
+                        move = &emptyBoard;;
+                        selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
+                    
+
+                        allMoves(chessPtr, gamePtr);
+
+                        game.turn = -game.turn; // change players
+                        game.event = 0;
+                        chess[mousePos.y][mousePos.x].num++; // +1 to number of times a piece was moved
+                        chess[mousePos.y][mousePos.x].shortclash = 0;
                         allMoves(chessPtr, gamePtr);
 
                         spritesUpdate(chessPtr);
@@ -145,6 +218,7 @@ int main() {
                             }
                         }
                     }
+                    
                 }
             }
         }

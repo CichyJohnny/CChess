@@ -63,7 +63,6 @@ void escapeCheck(struct figure (*chessPtr)[8][8], struct game *gamePtr, int chec
                             newCheck = isCheck(nextChessPtr, copyGamePtr);
 
                             if (newCheck != 0) { 
-                                // remember that checking enemy does not prevent you from being checked
                                 // You still are checked
                                 // Discard changes
                                 (*chessPtr)[i][j].moveBoard[n][m] = 0;
