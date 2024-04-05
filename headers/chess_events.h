@@ -79,4 +79,5 @@ void escapeCheck(struct figure (*chessPtr)[8][8], struct game *gamePtr, int chec
     }
 }
 
+
 #endif

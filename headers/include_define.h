@@ -15,7 +15,6 @@ struct figure {
     int num; // times of being moved
     int moveBoard[8][8]; // moveBoard of possible moves
     int possible_moves; // number of possible moves
-    int shortclash;
 };
 
 // Structure of game's properties
@@ -27,6 +26,8 @@ struct game {
     int event;
     int stopRecur;
     int possible_moves;
+    int shortclash;
+    int longclash;
 };
 
 #endif
