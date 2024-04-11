@@ -1,5 +1,4 @@
 #include "include_define.h"
-#include <stdio.h>
 
 #ifndef MOVES_H
 #define MOVES_H
@@ -217,18 +216,7 @@ void kingMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game 
 
     sfVector2i dirs[8] = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
     int vec_x, vec_y, check;
-
-    struct figure nextChess[8][8];
-    struct figure (*nextChessPtr)[8][8] = &nextChess;
-
-    struct figure movePiece;
-    struct figure empty = {'.', NULL, 0};
-
-    struct game copyGame = *gamePtr;
-    copyGame.stopRecur = 1;
-    struct game *copyGamePtr = &copyGame;
     
-
     for (int i=0; i<8; i++) {
         vec_x = x + dirs[i].x;
         vec_y = y + dirs[i].y;
@@ -240,13 +228,10 @@ void kingMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game 
         vec_x = x + dirs[i].x;
         vec_y = y + dirs[i].y;
 
-        if (gamePtr->stopRecur == 0) {
+        if (vec_y >= 0 && vec_x >= 0 && vec_y <= 7 && vec_x <= 7 && isWhiteBlack((*chessPtr)[vec_y][vec_x].name) != color) {
 
-            if (vec_y >= 0 && vec_x >= 0 && vec_y <= 7 && vec_x <= 7 && isWhiteBlack((*chessPtr)[vec_y][vec_x].name) != color) {
-
-                if ((color == 1 && gamePtr->blackBoard[vec_y][vec_x] == 0) || (color == -1 && gamePtr->whiteBoard[vec_y][vec_x] == 0)) {
-                    figure->moveBoard[vec_y][vec_x] = 1;
-                }
+            if ((color == 1 && gamePtr->blackBoard[vec_y][vec_x] == 0) || (color == -1 && gamePtr->whiteBoard[vec_y][vec_x] == 0)) {
+                figure->moveBoard[vec_y][vec_x] = 1;
             }
         }
     }

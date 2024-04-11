@@ -24,7 +24,6 @@ struct game {
     int whiteBoard[8][8];
     int blackBoard[8][8];
     int event;
-    int stopRecur;
     int possible_moves;
     int shortclash;
     int longclash;

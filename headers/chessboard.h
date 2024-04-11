@@ -1,4 +1,4 @@
-#include "include_define.h"
+// #include "include_define.h"
 
 #ifndef CHESSBOARD_H
 #define CHESSBOARD_H

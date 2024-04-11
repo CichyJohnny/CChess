@@ -4,6 +4,7 @@
 #include "headers/moveboard.h"
 #include "headers/chess_events.h"
 #include "headers/clashing.h"
+#include "headers/actions.h"
 
 int main() {
     // Window setting
@@ -20,7 +21,6 @@ int main() {
     struct game *gamePtr = &game;
     game.turn = 1;
     game.event = 0;
-    game.stopRecur = 0;
     game.possible_moves = 0;
     game.shortclash = 0;
     game.longclash = 0;

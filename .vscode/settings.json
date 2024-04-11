@@ -5,6 +5,7 @@
         "ios": "c",
         "type_traits": "c",
         "xstring": "c",
-        "xutility": "c"
+        "xutility": "c",
+        "include_define.h": "c"
     }
 }

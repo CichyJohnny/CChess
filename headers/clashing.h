@@ -1,6 +1,6 @@
-#include "include_define.h"
-#include "sprites.h"
-#include "moveboard.h"
+// #include "include_define.h"
+// #include "sprites.h"
+// #include "moveboard.h"
 
 #ifndef CLASHING_H
 #define CLASHING_H
