@@ -24,8 +24,7 @@ int main() {
     game.possible_moves = 0;
     game.shortclash = 0;
     game.longclash = 0;
-    game.enPassent = (sfVector2i){-1, -1};
-    game.enPassentturn = 0;
+    game.enPassant = (sfVector2i){-1, -1};
     clearBoard(game.whiteBoard);
     clearBoard(game.blackBoard);
     
@@ -127,11 +126,11 @@ int main() {
                                     }
                                 }
 
-                                // Mark enPassent
+                                // Mark enPassant
                                 if (chess[selectedPiece.y][selectedPiece.x].name == 'p' || chess[selectedPiece.y][selectedPiece.x].name == 'P') {
-                                    if (game.enPassent.x != -1) {
-                                        if (selectedPiece.y - game.turn == game.enPassent.y && (selectedPiece.x + 1 == game.enPassent.x || selectedPiece.x - 1 == game.enPassent.x)) {
-                                            (*move)[game.enPassent.y][game.enPassent.x] = 1;
+                                    if (game.enPassant.x != -1) {
+                                        if (selectedPiece.y - game.turn == game.enPassant.y && (selectedPiece.x + 1 == game.enPassant.x || selectedPiece.x - 1 == game.enPassant.x)) {
+                                            (*move)[game.enPassant.y][game.enPassant.x] = 1;
                                             enPas = game.turn;
                                         }
                                     }
@@ -154,48 +153,36 @@ int main() {
 
                             move = &emptyBoard;;
                             selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
-                            game.enPassent = (sfVector2i){-1, -1};
+                            game.enPassant = (sfVector2i){-1, -1};
                         } else if (game.shortclash == -1 && mousePos.x == 6 && mousePos.y == 0) {
                             // Black short clashing
                             blackShortClash(chessPtr, gamePtr);
 
                             move = &emptyBoard;;
                             selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
-                            game.enPassent = (sfVector2i){-1, -1};
+                            game.enPassant = (sfVector2i){-1, -1};
                         } else if (game.longclash == 1 && mousePos.x == 2 && mousePos.y == 7) {
                             // White long clashing
                             whiteLongClash(chessPtr, gamePtr);
 
                             move = &emptyBoard;;
                             selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
-                            game.enPassent = (sfVector2i){-1, -1};
+                            game.enPassant = (sfVector2i){-1, -1};
                         }  else if (game.longclash == -1 && mousePos.x == 2 && mousePos.y == 0) {
                             // Black long clashing
                             blackLongClash(chessPtr, gamePtr);
 
                             move = &emptyBoard;
                             selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
-                            game.enPassent = (sfVector2i){-1, -1};
+                            game.enPassant = (sfVector2i){-1, -1};
                         } 
-                        // White en passent
-                        else if (enPas != 0 && mousePos.x == game.enPassent.x && mousePos.y == game.enPassent.y) {
-                            movePiece = chess[selectedPiece.y][selectedPiece.x];
-                            chess[selectedPiece.y][selectedPiece.x] = empty;
-                            chess[mousePos.y + enPas][mousePos.x] = empty;
-                            chess[mousePos.y][mousePos.x] = movePiece;
+                        //  En passant
+                        else if (enPas != 0 && mousePos.x == game.enPassant.x && mousePos.y == game.enPassant.y) {
+                            enPassant(chessPtr, gamePtr, selectedPiece, mousePos, enPas);
 
                             move = &emptyBoard;
                             selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
-                            game.enPassent = (sfVector2i){-1, -1};
-
-                            gamePtr->turn = -gamePtr->turn; // change players
-                            gamePtr->event = 0;
-                            chess[mousePos.y][mousePos.x].num++; // +1 to number of times a piece was moved
-                            gamePtr->shortclash = 0;
-                            gamePtr->longclash = 0;
-                            allMoves(chessPtr, gamePtr);
-
-                            spritesUpdate(chessPtr);
+                            game.enPassant = (sfVector2i){-1, -1};
                         }
 
 
@@ -203,7 +190,7 @@ int main() {
 
                         // Normal move
                         else {
-                            game.enPassent = (sfVector2i){-1, -1};
+                            game.enPassant = (sfVector2i){-1, -1};
 
                             normalMove(chessPtr, gamePtr, selectedPiece, mousePos);
 

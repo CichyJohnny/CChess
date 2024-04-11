@@ -28,8 +28,7 @@ struct game {
     int possible_moves;
     int shortclash;
     int longclash;
-    sfVector2i enPassent;
-    int enPassentturn;
+    sfVector2i enPassant;
 };
 
 #endif

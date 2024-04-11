@@ -35,6 +35,24 @@ int isBlackCheck(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
     return 0;
 }
 
+void enPassant(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2i selectedPiece, sfVector2i mousePos, int enPas) {
+    struct figure movePiece;
+    struct figure empty = {'.', NULL, 0};
+
+    movePiece = (*chessPtr)[selectedPiece.y][selectedPiece.x];
+    (*chessPtr)[selectedPiece.y][selectedPiece.x] = empty;
+    (*chessPtr)[mousePos.y + enPas][mousePos.x] = empty;
+    (*chessPtr)[mousePos.y][mousePos.x] = movePiece;
+
+    gamePtr->turn = -gamePtr->turn; // change players
+    gamePtr->event = 0;
+    (*chessPtr)[mousePos.y][mousePos.x].num++; // +1 to number of times a piece was moved
+    gamePtr->shortclash = 0;
+    gamePtr->longclash = 0;
+    allMoves(chessPtr, gamePtr);
+
+    spritesUpdate(chessPtr);
+}
 
 void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2i selectedPiece, sfVector2i mousePos) {
     struct figure movePiece;
@@ -106,11 +124,9 @@ void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2
 
 
     if (movePiece.name == 'P' && mousePos.y == 4) {
-        gamePtr->enPassent = (sfVector2i){mousePos.x, 5};
-        // gamePtr->enPassentturn = 1;
+        gamePtr->enPassant = (sfVector2i){mousePos.x, 5};
     } else if (movePiece.name == 'p' && mousePos.y == 3) {
-        gamePtr->enPassent = (sfVector2i){mousePos.x, 2};
-        // gamePtr->enPassentturn = -1;
+        gamePtr->enPassant = (sfVector2i){mousePos.x, 2};
     }
 }
 
