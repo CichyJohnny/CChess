@@ -52,6 +52,8 @@ void pawnMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game 
             figure->moveBoard[y - 1][x + 1] = 1;
             gamePtr->whiteBoard[y - 1][x + 1] = 1;
         }
+
+
     } else {
         if (y + 1 <= 7 && (*chessPtr)[y + 1][x].name == '.') {   
             figure->moveBoard[y + 1][x] = 1;
@@ -242,29 +244,6 @@ void kingMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game 
 
             if (vec_y >= 0 && vec_x >= 0 && vec_y <= 7 && vec_x <= 7 && isWhiteBlack((*chessPtr)[vec_y][vec_x].name) != color) {
 
-                if (gamePtr->event == 0) {
-                    // Copy of chess list
-                    copyChess(chessPtr, nextChessPtr);
-
-                    // Moving piece on copied board
-                    movePiece = nextChess[y][x];
-                    nextChess[y][x] = empty; // clear square
-                    nextChess[vec_y][vec_x] = movePiece; // movie piece
-
-                    // Computing all moves after the move
-                    allMoves(nextChessPtr, copyGamePtr);
-
-                    // We check if there is a check after the move
-                    check = isCheck(nextChessPtr, copyGamePtr);
-
-                    if (check == color) {
-                        // You are checked
-                        // Discard changes
-                        nextChess[y][x] = movePiece; // revert move
-                        nextChess[vec_y][vec_x] = empty; // revert move
-                        continue;
-                    }
-                }
                 if ((color == 1 && gamePtr->blackBoard[vec_y][vec_x] == 0) || (color == -1 && gamePtr->whiteBoard[vec_y][vec_x] == 0)) {
                     figure->moveBoard[vec_y][vec_x] = 1;
                 }

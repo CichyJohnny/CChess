@@ -3,6 +3,7 @@
 #include "headers/chessboard.h"
 #include "headers/moveboard.h"
 #include "headers/chess_events.h"
+#include "headers/clashing.h"
 
 int main() {
     // Window setting
@@ -23,11 +24,10 @@ int main() {
     game.possible_moves = 0;
     game.shortclash = 0;
     game.longclash = 0;
+    game.enPassent = (sfVector2i){-1, -1};
+    game.enPassentturn = 0;
     clearBoard(game.whiteBoard);
     clearBoard(game.blackBoard);
-
-    // Define empty square
-    struct figure empty = {'.', NULL, 0};
     
     // Start position init
     char figures[8][8] = {
@@ -42,13 +42,13 @@ int main() {
         };
     // char figures[8][8] = {
     //     {'.', '.', '.', '.', '.', '.', '.', '.'},
+    //     {'.', 'p', '.', '.', '.', '.', '.', '.'},
+    //     {'.', '.', '.', '.', '.', '.', 'k', '.'},
     //     {'.', '.', '.', '.', '.', '.', '.', '.'},
-    //     {'.', '.', '.', '.', 'K', '.', '.', '.'},
     //     {'.', '.', '.', '.', '.', '.', '.', '.'},
     //     {'.', '.', '.', '.', '.', '.', '.', '.'},
-    //     {'.', '.', '.', '.', 'k', '.', '.', '.'},
-    //     {'.', '.', '.', '.', '.', '.', 'R', '.'},
-    //     {'.', '.', '.', '.', 'K', '.', '.', 'R'}
+    //     {'.', '.', 'P', '.', '.', '.', '.', 'K'},
+    //     {'.', '.', '.', '.', '.', '.', '.', '.'}
     //     };
 
 
@@ -67,9 +67,6 @@ int main() {
 
     allMoves(chessPtr, gamePtr);
 
-    struct figure movePiece;
-
-
     // Move boeard init
     int emptyBoard[8][8];
     int (*move)[8][8] = &emptyBoard;
@@ -77,6 +74,11 @@ int main() {
 
     // To store the selected piece position
     sfVector2i selectedPiece = {-1, -1};
+
+    int enPas = 0;
+
+    struct figure movePiece;
+    struct figure empty = {'.', NULL, 0};
 
     // Game loop
     while (sfRenderWindow_isOpen(window)) {
@@ -94,100 +96,121 @@ int main() {
                     sfRenderWindow_close(window);
                 }
             }
-            // Move figure
-            else if (event.type == sfEvtMouseButtonPressed) {
-                if (event.mouseButton.button == sfMouseLeft) {
-                    sfVector2i mousePos = {event.mouseButton.x / SQUARE_SIZE, event.mouseButton.y / SQUARE_SIZE};
+            else if (game.event != 2 && game.event != 3) {
+                // Move figure
+                if (event.type == sfEvtMouseButtonPressed) {
+                    if (event.mouseButton.button == sfMouseLeft) {
+                        sfVector2i mousePos = {event.mouseButton.x / SQUARE_SIZE, event.mouseButton.y / SQUARE_SIZE};
 
-                    // Selecting a piece
-                    if (selectedPiece.x == -1) {
-                        // Check if it't player's turn
-                        if (isWhiteBlack(chess[mousePos.y][mousePos.x].name) == game.turn) {
-                            selectedPiece = mousePos;
-                            move = &(chess[mousePos.y][mousePos.x].moveBoard);
+                        // Selecting a piece
+                        if (selectedPiece.x == -1) {
+                            enPas = 0;
+                            // Check if it't player's turn
+                            if (isWhiteBlack(chess[mousePos.y][mousePos.x].name) == game.turn) {
+                                selectedPiece = mousePos;
+                                move = &(chess[mousePos.y][mousePos.x].moveBoard);
 
-                            if (chess[selectedPiece.y][selectedPiece.x].name == 'K' || chess[selectedPiece.y][selectedPiece.x].name == 'k') {
-                                shortCastling(chessPtr, selectedPiece, gamePtr);
-                                if (game.shortclash == 1) {
-                                    (*move)[7][6] = 1;
-                                } else if (game.shortclash == -1) {
-                                    (*move)[0][6] = 1;  
+                                // Mark castling
+                                if (chess[selectedPiece.y][selectedPiece.x].name == 'K' || chess[selectedPiece.y][selectedPiece.x].name == 'k') {
+                                    shortCastling(chessPtr, selectedPiece, gamePtr);
+                                    if (game.shortclash == 1) {
+                                        (*move)[7][6] = 1;
+                                    } else if (game.shortclash == -1) {
+                                        (*move)[0][6] = 1;  
+                                    }
+
+                                    longCastling(chessPtr, selectedPiece, gamePtr);
+                                    if (game.longclash == 1) {
+                                        (*move)[7][2] = 1;
+                                    } else if (game.longclash == -1) {
+                                        (*move)[0][2] = 1;
+                                    }
                                 }
 
-                                longCastling(chessPtr, selectedPiece, gamePtr);
-                                if (game.longclash == 1) {
-                                    (*move)[7][2] = 1;
-                                } else if (game.longclash == -1) {
-                                    (*move)[0][2] = 1;
+                                // Mark enPassent
+                                if (chess[selectedPiece.y][selectedPiece.x].name == 'p' || chess[selectedPiece.y][selectedPiece.x].name == 'P') {
+                                    if (game.enPassent.x != -1) {
+                                        if (selectedPiece.y - game.turn == game.enPassent.y && (selectedPiece.x + 1 == game.enPassent.x || selectedPiece.x - 1 == game.enPassent.x)) {
+                                            (*move)[game.enPassent.y][game.enPassent.x] = 1;
+                                            enPas = game.turn;
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                    // Check if move is right
-                    else if ((*move)[mousePos.y][mousePos.x] == 0) {
-                        selectedPiece = (sfVector2i){-1, -1};
-                        move = &emptyBoard;
-                    }
+                        // Check if move is right
+                        else if ((*move)[mousePos.y][mousePos.x] == 0) {
+                            selectedPiece = (sfVector2i){-1, -1};
+                            move = &emptyBoard;
+                        }
 
-                    // Moving the selected piece
-                    else if (game.shortclash == 1 && mousePos.x == 6 && mousePos.y == 7) {
-                        whiteShortClash(chessPtr, gamePtr);
 
-                        move = &emptyBoard;;
-                        selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
 
-                    } else if (game.shortclash == -1 && mousePos.x == 6 && mousePos.y == 0) {
-                        blackShortClash(chessPtr, gamePtr);
 
-                        move = &emptyBoard;;
-                        selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
+                        // Check for clashes
+                        else if (game.shortclash == 1 && mousePos.x == 6 && mousePos.y == 7) {
+                            // White short clashing
+                            whiteShortClash(chessPtr, gamePtr);
 
-                    } else if (game.longclash == 1 && mousePos.x == 2 && mousePos.y == 7) {
-                        whiteLongClash(chessPtr, gamePtr);
+                            move = &emptyBoard;;
+                            selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
+                            game.enPassent = (sfVector2i){-1, -1};
+                        } else if (game.shortclash == -1 && mousePos.x == 6 && mousePos.y == 0) {
+                            // Black short clashing
+                            blackShortClash(chessPtr, gamePtr);
 
-                        move = &emptyBoard;;
-                        selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
+                            move = &emptyBoard;;
+                            selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
+                            game.enPassent = (sfVector2i){-1, -1};
+                        } else if (game.longclash == 1 && mousePos.x == 2 && mousePos.y == 7) {
+                            // White long clashing
+                            whiteLongClash(chessPtr, gamePtr);
 
-                    }  else if (game.longclash == -1 && mousePos.x == 2 && mousePos.y == 0) {
-                        blackLongClash(chessPtr, gamePtr);
+                            move = &emptyBoard;;
+                            selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
+                            game.enPassent = (sfVector2i){-1, -1};
+                        }  else if (game.longclash == -1 && mousePos.x == 2 && mousePos.y == 0) {
+                            // Black long clashing
+                            blackLongClash(chessPtr, gamePtr);
 
-                        move = &emptyBoard;;
-                        selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
+                            move = &emptyBoard;
+                            selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
+                            game.enPassent = (sfVector2i){-1, -1};
+                        } 
+                        // White en passent
+                        else if (enPas != 0 && mousePos.x == game.enPassent.x && mousePos.y == game.enPassent.y) {
+                            movePiece = chess[selectedPiece.y][selectedPiece.x];
+                            chess[selectedPiece.y][selectedPiece.x] = empty;
+                            chess[mousePos.y + enPas][mousePos.x] = empty;
+                            chess[mousePos.y][mousePos.x] = movePiece;
 
-                    } else {
+                            move = &emptyBoard;
+                            selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
+                            game.enPassent = (sfVector2i){-1, -1};
+
+                            gamePtr->turn = -gamePtr->turn; // change players
+                            gamePtr->event = 0;
+                            chess[mousePos.y][mousePos.x].num++; // +1 to number of times a piece was moved
+                            gamePtr->shortclash = 0;
+                            gamePtr->longclash = 0;
+                            allMoves(chessPtr, gamePtr);
+
+                            spritesUpdate(chessPtr);
+                        }
+
+
+
+
                         // Normal move
-                        movePiece = chess[selectedPiece.y][selectedPiece.x];
-                        chess[selectedPiece.y][selectedPiece.x] = empty; // clear square
-                        chess[mousePos.y][mousePos.x] = movePiece; // movie piece
-                        move = &emptyBoard;;
-                        selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
-                    
+                        else {
+                            game.enPassent = (sfVector2i){-1, -1};
 
+                            normalMove(chessPtr, gamePtr, selectedPiece, mousePos);
 
-                        game.turn = -game.turn; // change players
-                        game.event = 0;
-                        chess[mousePos.y][mousePos.x].num++; // +1 to number of times a piece was moved
-                        game.shortclash = 0;
-                        game.longclash = 0;
-                        allMoves(chessPtr, gamePtr);
-
-                        spritesUpdate(chessPtr);
-
-                        int check = isCheck(chessPtr, gamePtr);
-                        if (check != 0) {
-                            printf("Check\n");
-                            game.event = 1;
-
-                            escapeCheck(chessPtr, gamePtr, check);
-                            if (game.possible_moves == 0) {
-                                printf("Mate\n");
-                            } else {
-                                printf("%d", game.possible_moves);
-                                game.possible_moves = 0;
-                            }
+                            move = &emptyBoard;
+                            selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
                         }
                     }
-                    
                 }
             }
         }
