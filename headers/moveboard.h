@@ -116,7 +116,7 @@ void allPossibilities(struct figure (*chessPtr)[8][8], struct game *gamePtr, int
                                 nextChess[i][j] = movePiece; // revert move
                                 nextChess[n][m] = empty; // revert move
                             } else {
-                                gamePtr->possible_moves++;
+                                gamePtr->possibleMoves++;
                             }
                         }
                     }

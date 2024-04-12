@@ -44,6 +44,15 @@ sfSprite* createSprite(sfVector2f position, char name) {
     return sprite;
 }
 
+sfSprite* createBackground() {
+    sfSprite* background = sfSprite_create();
+
+    sfSprite_setPosition(background, (sfVector2f){8 * SQUARE_SIZE, 0});
+    sfSprite_setTexture(background, sfTexture_createFromFile("res/background.png", NULL), sfTrue);
+
+    return background;
+}
+
 /*
 Simple void function for rendering every sprite on 8x8 chessboard
 */

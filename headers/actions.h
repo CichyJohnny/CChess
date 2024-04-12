@@ -18,9 +18,10 @@ void enPassant(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2i
 
     gamePtr->turn = -gamePtr->turn; // change players
     gamePtr->event = 0;
+    gamePtr->numTurn++;
     (*chessPtr)[mousePos.y][mousePos.x].num++; // +1 to number of times a piece was moved
-    gamePtr->shortclash = 0;
-    gamePtr->longclash = 0;
+    gamePtr->shortClash = 0;
+    gamePtr->longClash = 0;
     allMoves(chessPtr, gamePtr);
 
     spritesUpdate(chessPtr);
@@ -75,42 +76,41 @@ void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2
     gamePtr->turn = -gamePtr->turn; // change players
     gamePtr->event = 0;
     (*chessPtr)[mousePos.y][mousePos.x].num++; // +1 to number of times a piece was moved
-    gamePtr->shortclash = 0;
-    gamePtr->longclash = 0;
+    gamePtr->shortClash = 0;
+    gamePtr->longClash = 0;
     allMoves(chessPtr, gamePtr);
 
     spritesUpdate(chessPtr);
 
-    int check;
     int isPat = 0;
 
     if (gamePtr->turn == 1) {
-        check = isWhiteCheck(chessPtr, gamePtr);
+        gamePtr->check = isWhiteCheck(chessPtr, gamePtr);
     } else {
-        check = isBlackCheck(chessPtr, gamePtr);
+        gamePtr->check = isBlackCheck(chessPtr, gamePtr);
     }
 
-    if (check != 0) {
+    if (gamePtr->check != 0) {
         // If check or mate
         printf("Check\n");
         gamePtr->event = 1;
 
-        allPossibilities(chessPtr, gamePtr, check);
-        if (gamePtr->possible_moves == 0) {
+        allPossibilities(chessPtr, gamePtr, gamePtr->check);
+        if (gamePtr->possibleMoves == 0) {
             // If there no way to defend king, there is mat
             printf("Mate\n");
 
             gamePtr->event = 2;
         } else {
             // Else continue the game
-            gamePtr->possible_moves = 0;
+            gamePtr->possibleMoves = 0;
         }
     } else {
         // Check if move does not allow check
         allPossibilities(chessPtr, gamePtr, gamePtr->turn);
 
         // If pat
-        if (gamePtr->possible_moves == 0 && check == 0) {
+        if (gamePtr->possibleMoves == 0 && gamePtr->check == 0) {
             printf("Pat ");
             gamePtr->event = 3;
         } else {
@@ -129,7 +129,8 @@ void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2
         }
  
         // Normal move
-        gamePtr->possible_moves = 0;
+        gamePtr->possibleMoves = 0;
+        gamePtr->numTurn++;
     }
 
 
