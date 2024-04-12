@@ -26,6 +26,44 @@ void enPassant(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2i
     spritesUpdate(chessPtr);
 }
 
+void promote(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2i mousePos) {
+    if (mousePos.x >= 8 && mousePos.y == 7) {
+        if (gamePtr->turn == -1) {
+            if (mousePos.x == 8) {
+                (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'Q';
+            
+            } else if (mousePos.x == 9) {
+                (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'R';
+
+            } else if (mousePos.x == 10) {
+                (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'B';
+                
+            } else if (mousePos.x == 11) {
+                (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'N';
+
+            }
+        } else if (gamePtr->turn == 1) {
+            if (mousePos.x == 8) {
+                (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'q';
+            
+            } else if (mousePos.x == 9) {
+                (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'r';
+
+            } else if (mousePos.x == 10) {
+                (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'b';
+                
+            } else if (mousePos.x == 11) {
+                (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'n';
+
+            }
+        }
+        
+        allMoves(chessPtr, gamePtr);
+        spritesUpdate(chessPtr);
+        gamePtr->promote = (sfVector2i){-1, -1};
+    }
+}
+
 void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2i selectedPiece, sfVector2i mousePos) {
     struct figure movePiece;
     struct figure empty = {'.', NULL, 0};
@@ -99,6 +137,15 @@ void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2
         gamePtr->enPassant = (sfVector2i){mousePos.x, 5};
     } else if (movePiece.name == 'p' && mousePos.y == 3) {
         gamePtr->enPassant = (sfVector2i){mousePos.x, 2};
+    }
+
+
+    if (movePiece.name == 'P' && mousePos.y == 0) {
+        gamePtr->promote = mousePos;
+        printf("promote white");
+    } else if (movePiece.name == 'p' && mousePos.y == 7) {
+        gamePtr->promote = mousePos;
+        printf("promote white");
     }
 }
 

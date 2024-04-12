@@ -8,10 +8,26 @@
 
 int main() {
     // Window setting
-    sfVideoMode mode = {WINDOW_WIDTH, WINDOW_HEIGHT, 32};
-    sfRenderWindow* window = sfRenderWindow_create(mode, "Chessboard", sfDefaultStyle, NULL);
+    sfVideoMode mode = {12 * SQUARE_SIZE, 8 * SQUARE_SIZE, 32};
+    sfRenderWindow* window = sfRenderWindow_create(mode, "CChess", sfTitlebar | sfClose, NULL);
     sfRenderWindow_setFramerateLimit(window, 30);
 
+    sfSprite* background = sfSprite_create();
+    sfSprite_setPosition(background, (sfVector2f){8 * SQUARE_SIZE, 0});
+    sfSprite_setTexture(background ,sfTexture_createFromFile("res/background.png", NULL), sfTrue);
+
+    sfFont* font = sfFont_createFromFile("res/arial.ttf");
+    sfText* text_turn = sfText_create();
+    sfText_setString(text_turn, "White Turn!");
+    sfText_setFont(text_turn, font);
+    sfText_setCharacterSize(text_turn, 48);
+    sfText_setPosition(text_turn, (sfVector2f){9 * SQUARE_SIZE, 1 * SQUARE_SIZE});
+
+    sfText* text_event = sfText_create();
+    sfText_setFont(text_event, font);
+    sfText_setCharacterSize(text_event, 48);
+    sfText_setPosition(text_event, (sfVector2f){9 * SQUARE_SIZE, 2 * SQUARE_SIZE});
+    
     // Chessboard init
     sfRectangleShape* squares[8][8];
     defineChessBoard(squares);
@@ -25,30 +41,33 @@ int main() {
     game.shortclash = 0;
     game.longclash = 0;
     game.enPassant = (sfVector2i){-1, -1};
+    game.promote = (sfVector2i){-1, -1};
     clearBoard(game.whiteBoard);
     clearBoard(game.blackBoard);
+
+    int enPas = 0;
     
     // Start position init
-    char figures[8][8] = {
-        {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
-        {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
-        {'.', '.', '.', '.', '.', '.', '.', '.'},
-        {'.', '.', '.', '.', '.', '.', '.', '.'},
-        {'.', '.', '.', '.', '.', '.', '.', '.'},
-        {'.', '.', '.', '.', '.', '.', '.', '.'},
-        {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
-        {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
-        };
     // char figures[8][8] = {
-    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
-    //     {'.', 'p', '.', '.', '.', '.', '.', '.'},
-    //     {'.', '.', '.', '.', '.', '.', 'k', '.'},
-    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
+    //     {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
+    //     {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
     //     {'.', '.', '.', '.', '.', '.', '.', '.'},
     //     {'.', '.', '.', '.', '.', '.', '.', '.'},
-    //     {'.', '.', 'P', '.', '.', '.', '.', 'K'},
-    //     {'.', '.', '.', '.', '.', '.', '.', '.'}
+    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
+    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
+    //     {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+    //     {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
     //     };
+    char figures[8][8] = {
+        {'.', '.', '.', '.', '.', '.', '.', '.'},
+        {'.', 'p', '.', '.', '.', '.', '.', '.'},
+        {'.', '.', '.', '.', '.', '.', 'k', '.'},
+        {'.', '.', '.', '.', '.', '.', '.', '.'},
+        {'.', '.', '.', '.', '.', '.', '.', '.'},
+        {'.', '.', '.', '.', '.', '.', '.', '.'},
+        {'.', '.', 'P', '.', '.', '.', '.', 'K'},
+        {'.', '.', '.', '.', '.', '.', '.', '.'}
+        };
 
 
     // Figures init
@@ -73,9 +92,6 @@ int main() {
 
     // To store the selected piece position
     sfVector2i selectedPiece = {-1, -1};
-
-    int enPas = 0;
-
     struct figure movePiece;
     struct figure empty = {'.', NULL, 0};
 
@@ -101,8 +117,12 @@ int main() {
                     if (event.mouseButton.button == sfMouseLeft) {
                         sfVector2i mousePos = {event.mouseButton.x / SQUARE_SIZE, event.mouseButton.y / SQUARE_SIZE};
 
+                        if (gamePtr->promote.x != -1) {
+                            promote(chessPtr, gamePtr, mousePos);
+                        }
+
                         // Selecting a piece
-                        if (selectedPiece.x == -1) {
+                        else if (selectedPiece.x == -1) {
                             enPas = 0;
                             // Check if it't player's turn
                             if (isWhiteBlack(chess[mousePos.y][mousePos.x].name) == game.turn) {
@@ -138,7 +158,7 @@ int main() {
                             }
                         }
                         // Check if move is right
-                        else if ((*move)[mousePos.y][mousePos.x] == 0) {
+                        else if ((*move)[mousePos.y][mousePos.x] == 0 || mousePos.x >= 8) {
                             selectedPiece = (sfVector2i){-1, -1};
                             move = &emptyBoard;
                         }
@@ -197,16 +217,42 @@ int main() {
                             move = &emptyBoard;
                             selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
                         }
+
+                        if (game.turn == 1) {
+                            sfText_setString(text_turn, "White Turn!");
+                        } else {
+                            sfText_setString(text_turn, "Black Turn!");
+                        }
+                        
                     }
+                }
+            }
+            else {
+                if (game.event == 2) {
+                    if (game.turn == 1) {
+                        sfText_setString(text_turn, "Black Won!");
+                    } else {
+                        sfText_setString(text_turn, "White Won!");
+                    }
+                    sfText_setString(text_event, "Check Mate!");
+                } else if (game.event == 3) {
+                    sfText_setString(text_turn, "Draw!");
+                    sfText_setString(text_event, "Stale Mate");
                 }
             }
         }
 
         // Render frame
         sfRenderWindow_clear(window, sfWhite);
+        sfRenderWindow_drawSprite(window, background, NULL);
+        sfRenderWindow_drawText(window, text_turn, NULL);
+        sfRenderWindow_drawText(window, text_event, NULL);
+
         drawChessboard(window, squares);
         drawMoves(window, *move);
         drawFigures(window, chess);
+        drawPromotion(window, gamePtr);
+
         sfRenderWindow_display(window);
     }
 
@@ -217,6 +263,9 @@ int main() {
             sfSprite_destroy(chess[i][j].sprite);
         }
     }
+    sfSprite_destroy(background);
+    sfText_destroy(text_turn);
+    sfFont_destroy(font);
     sfRenderWindow_destroy(window);
 
     return 0;

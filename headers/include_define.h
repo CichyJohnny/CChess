@@ -5,8 +5,6 @@
 #define INCUDE_DEFINE_H
 
 #define SQUARE_SIZE 128 // base square size equal to textures resolution
-#define WINDOW_WIDTH 8 * SQUARE_SIZE
-#define WINDOW_HEIGHT 8 * SQUARE_SIZE
 
 // Structure of chess piece
 struct figure {
@@ -28,6 +26,7 @@ struct game {
     int shortclash;
     int longclash;
     sfVector2i enPassant;
+    sfVector2i promote;
 };
 
 #endif
