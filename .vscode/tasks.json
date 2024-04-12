@@ -18,7 +18,8 @@
                 "C:/IT/vsprojects/external/SFML/lib/gcc", // tu też
                 "-lcsfml-graphics",
                 "-lcsfml-window",
-                "-lcsfml-system"
+                "-lcsfml-system",
+                "-mwindows"
             ],
             "group": {
                 "kind": "build",

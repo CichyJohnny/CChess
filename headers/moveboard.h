@@ -30,17 +30,42 @@ void canMove(struct figure (*chessPtr)[8][8], sfVector2i position, int moveBoard
 /*
 Void function that render green squares representing possible moves for selected piece
 */
-void drawMoves(sfRenderWindow* window, int moveBoard[8][8]) {
+void drawMoves(sfRenderWindow* window, int moveBoard[8][8], struct game *gamePtr) {
+    int radius = 32;
+    int thick = 5;
+    sfColor color = sfColor_fromRGBA(0, 0, 0, 96);
+
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
-            if (moveBoard[i][j] == 1) {   
-                sfVector2f position = {10 + j * SQUARE_SIZE, 10 + i * SQUARE_SIZE};
-                sfVector2f size = {SQUARE_SIZE - 20, SQUARE_SIZE - 20};
-                sfColor color = sfGreen;
-
-                sfRectangleShape *square = createSquare(position, size, color);
+            if (moveBoard[i][j] == 1) {
                 
-                sfRenderWindow_drawRectangleShape(window, square, NULL);
+                sfVector2f position = {(SQUARE_SIZE/2 - radius) + j * SQUARE_SIZE, (SQUARE_SIZE/2 - radius) + i * SQUARE_SIZE};
+
+                sfCircleShape *circle = sfCircleShape_create();
+                sfCircleShape_setRadius(circle, radius);
+                sfCircleShape_setFillColor(circle, color);
+                sfCircleShape_setPosition(circle, position);
+
+                sfRenderWindow_drawCircleShape(window, circle, NULL);
+
+                sfCircleShape_destroy(circle);
+
+                if (gamePtr->chess[i][j].name != '.') {
+
+                    sfVector2f pos2 = {thick + j * SQUARE_SIZE, thick + i * SQUARE_SIZE};
+
+                    sfCircleShape *outlineCircle = sfCircleShape_create();
+
+                    sfCircleShape_setRadius(outlineCircle, 64 - thick);
+                    sfCircleShape_setFillColor(outlineCircle, sfTransparent);
+                    sfCircleShape_setPosition(outlineCircle, pos2);
+                    sfCircleShape_setOutlineColor(outlineCircle, color); // Set the outline color of the circle
+                    sfCircleShape_setOutlineThickness(outlineCircle, thick);
+
+                    sfRenderWindow_drawCircleShape(window, outlineCircle, NULL);
+
+                    sfCircleShape_destroy(outlineCircle);
+                }
             }
         }
     }    

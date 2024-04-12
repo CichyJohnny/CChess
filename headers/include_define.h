@@ -29,6 +29,8 @@ struct game {
     int check;
     sfVector2i enPassant;
     sfVector2i promote;
+
+    struct figure chess[8][8];
 };
 
 struct game createGame() {

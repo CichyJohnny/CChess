@@ -118,4 +118,28 @@ void drawPromotion(sfRenderWindow* window, struct game *gamePtr) {
     }
 }
 
+void saveLoadCreate(sfRectangleShape* (*saveLoadRect)[2]) {
+    sfColor color;
+
+    sfVector2f savePos = {10 * SQUARE_SIZE, 7 * SQUARE_SIZE};
+    (*saveLoadRect)[0] = sfRectangleShape_create();
+    sfRectangleShape_setPosition((*saveLoadRect)[0], savePos);
+    sfRectangleShape_setSize((*saveLoadRect)[0], (sfVector2f){SQUARE_SIZE, SQUARE_SIZE});
+    sfRectangleShape_setTexture((*saveLoadRect)[0], sfTexture_createFromFile("res/save.png", NULL), sfTrue);
+
+    sfVector2f loadPos = {11 * SQUARE_SIZE, 7 * SQUARE_SIZE};
+    (*saveLoadRect)[1] = sfRectangleShape_create();
+    sfRectangleShape_setPosition((*saveLoadRect)[1], loadPos);
+    sfRectangleShape_setSize((*saveLoadRect)[1], (sfVector2f){SQUARE_SIZE, SQUARE_SIZE});
+    sfRectangleShape_setTexture((*saveLoadRect)[1], sfTexture_createFromFile("res/load.png", NULL), sfTrue);
+
+
+}
+
+void drawSaveLoad(sfRenderWindow* window, sfRectangleShape* (*saveLoadRect)[2]) {
+    for (int i=0; i<2; i++) {
+        sfRenderWindow_drawRectangleShape(window, (*saveLoadRect)[i], NULL);
+    }
+}
+
 #endif

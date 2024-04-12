@@ -26,9 +26,9 @@ void defineChessBoard (sfRectangleShape* squares[8][8]) {
             sfColor color;
 
             if ((i + j) % 2 == 0)
-                color = sfColor_fromRGB(255, 206, 158); // brown color for "black" squares
+                color = sfColor_fromRGB(115, 149, 82); // green color for "black" squares
             else
-                color = sfColor_fromRGB(209, 139, 71); // cream color for "white" squares
+                color = sfColor_fromRGB(235, 236, 208); // cream color for "white" squares
 
             squares[i][j] = createSquare(position, size, color);
         }

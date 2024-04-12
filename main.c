@@ -6,6 +6,7 @@
 #include "headers/clashing.h"
 #include "headers/actions.h"
 #include "headers/texts.h"
+#include "headers/save_load.h"
 
 int main() {
     // Window setting
@@ -14,7 +15,6 @@ int main() {
     sfRenderWindow_setFramerateLimit(window, 30);
 
     sfSprite* background = createBackground();
-
     
     // Chessboard init
     sfRectangleShape* squares[8][8];
@@ -44,30 +44,22 @@ int main() {
         {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
         {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
         };
-    // char figures[8][8] = {
-    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
-    //     {'.', 'p', '.', '.', '.', '.', '.', '.'},
-    //     {'.', '.', '.', '.', '.', '.', 'k', '.'},
-    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
-    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
-    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
-    //     {'.', '.', 'P', '.', '.', '.', '.', 'K'},
-    //     {'.', '.', '.', '.', '.', '.', '.', '.'}
-    //     };
 
 
     // Figures init
-    struct figure chess[8][8];
-    struct figure (*chessPtr)[8][8] = &chess;
+    struct figure (*chessPtr)[8][8] = gamePtr->chess;
 
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
             sfVector2f position = {j * SQUARE_SIZE, i * SQUARE_SIZE};
-            chess[i][j].name = figures[i][j];
-            chess[i][j].num = 0;
-            chess[i][j].sprite = createSprite(position, figures[i][j]);
+            (*chessPtr)[i][j].name = figures[i][j];
+            (*chessPtr)[i][j].num = 0;
+            (*chessPtr)[i][j].sprite = createSprite(position, figures[i][j]);
         }
     }
+
+    sfRectangleShape* saveLoadRect[2];
+    saveLoadCreate(&saveLoadRect);
 
     allMoves(chessPtr, gamePtr);
 
@@ -104,16 +96,23 @@ int main() {
                             promote(chessPtr, gamePtr, mousePos);
                         }
 
+                        else if (mousePos.x == 10 && mousePos.y == 7) {
+                            quickSave(gamePtr, "save.bin");
+                        }
+                        else if (mousePos.x == 11 && mousePos.y == 7) {
+                            quickLoad(gamePtr, "save.bin");
+                        }
+
                         // Selecting a piece
                         else if (selectedPiece.x == -1) {
                             enPas = 0;
                             // Check if it't player's turn
-                            if (isWhiteBlack(chess[mousePos.y][mousePos.x].name) == game.turn) {
+                            if (isWhiteBlack((*chessPtr)[mousePos.y][mousePos.x].name) == game.turn) {
                                 selectedPiece = mousePos;
-                                move = &(chess[mousePos.y][mousePos.x].moveBoard);
+                                move = &((*chessPtr)[mousePos.y][mousePos.x].moveBoard);
 
                                 // Mark castling
-                                if (chess[selectedPiece.y][selectedPiece.x].name == 'K' || chess[selectedPiece.y][selectedPiece.x].name == 'k') {
+                                if ((*chessPtr)[selectedPiece.y][selectedPiece.x].name == 'K' || (*chessPtr)[selectedPiece.y][selectedPiece.x].name == 'k') {
                                     shortCastling(chessPtr, selectedPiece, gamePtr);
                                     if (game.shortClash == 1) {
                                         (*move)[7][6] = 1;
@@ -130,7 +129,7 @@ int main() {
                                 }
 
                                 // Mark enPassant
-                                if (chess[selectedPiece.y][selectedPiece.x].name == 'p' || chess[selectedPiece.y][selectedPiece.x].name == 'P') {
+                                if ((*chessPtr)[selectedPiece.y][selectedPiece.x].name == 'p' || (*chessPtr)[selectedPiece.y][selectedPiece.x].name == 'P') {
                                     if (game.enPassant.x != -1) {
                                         if (selectedPiece.y - game.turn == game.enPassant.y && (selectedPiece.x + 1 == game.enPassant.x || selectedPiece.x - 1 == game.enPassant.x)) {
                                             (*move)[game.enPassant.y][game.enPassant.x] = 1;
@@ -235,13 +234,14 @@ int main() {
         sfRenderWindow_drawText(window, text_turn, NULL);
         sfRenderWindow_drawText(window, text_event, NULL);
 
-        sprintf(count, "%d", game.numTurn);
+        sprintf(count, "%d", game.numTurn/2);
         sfText_setString(text_count, count);
         sfRenderWindow_drawText(window, text_count, NULL);
 
         drawChessboard(window, squares);
-        drawMoves(window, *move);
-        drawFigures(window, chess);
+        drawMoves(window, *move, gamePtr);
+        drawFigures(window, (*chessPtr));
+        drawSaveLoad(window, &saveLoadRect);
         drawPromotion(window, gamePtr);
 
         sfRenderWindow_display(window);
@@ -251,11 +251,15 @@ int main() {
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
             sfRectangleShape_destroy(squares[i][j]);
-            sfSprite_destroy(chess[i][j].sprite);
+            sfSprite_destroy((*chessPtr)[i][j].sprite);
         }
     }
     sfSprite_destroy(background);
     sfText_destroy(text_turn);
+    sfText_destroy(text_event);
+    sfText_destroy(text_count);
+    sfRectangleShape_destroy(saveLoadRect[0]);
+    sfRectangleShape_destroy(saveLoadRect[1]);
     sfFont_destroy(font);
     sfRenderWindow_destroy(window);
 

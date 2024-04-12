@@ -2,14 +2,13 @@
 // #include "moves.h"
 // #include "moveboard.h"
 // #include "chess_events.h"
-#include <stdio.h>
 
 #ifndef ACTIONS_H
 #define ACTIONS_H
 
 void enPassant(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2i selectedPiece, sfVector2i mousePos, int enPas) {
     struct figure movePiece;
-    struct figure empty = {'.', NULL, 0};
+    struct figure empty = {.name='.', .sprite=NULL, .num=0};
 
     movePiece = (*chessPtr)[selectedPiece.y][selectedPiece.x];
     (*chessPtr)[selectedPiece.y][selectedPiece.x] = empty;
@@ -79,6 +78,7 @@ void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2
     gamePtr->shortClash = 0;
     gamePtr->longClash = 0;
     allMoves(chessPtr, gamePtr);
+    gamePtr->numTurn++;
 
     spritesUpdate(chessPtr);
 
@@ -92,13 +92,11 @@ void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2
 
     if (gamePtr->check != 0) {
         // If check or mate
-        printf("Check\n");
         gamePtr->event = 1;
 
         allPossibilities(chessPtr, gamePtr, gamePtr->check);
         if (gamePtr->possibleMoves == 0) {
             // If there no way to defend king, there is mat
-            printf("Mate\n");
 
             gamePtr->event = 2;
         } else {
@@ -111,7 +109,6 @@ void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2
 
         // If pat
         if (gamePtr->possibleMoves == 0 && gamePtr->check == 0) {
-            printf("Pat ");
             gamePtr->event = 3;
         } else {
             for (int i=0; i<8; i++) {
@@ -122,7 +119,6 @@ void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2
                 }
             }
             if (isPat == 0) {
-                printf("Pat ");
                 gamePtr->event = 3;
             }
             isPat = 0;
@@ -130,7 +126,6 @@ void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2
  
         // Normal move
         gamePtr->possibleMoves = 0;
-        gamePtr->numTurn++;
     }
 
 
@@ -143,10 +138,8 @@ void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2
 
     if (movePiece.name == 'P' && mousePos.y == 0) {
         gamePtr->promote = mousePos;
-        printf("promote white");
     } else if (movePiece.name == 'p' && mousePos.y == 7) {
         gamePtr->promote = mousePos;
-        printf("promote white");
     }
 }
 
