@@ -101,6 +101,8 @@ int main() {
                         }
                         else if (mousePos.x == 11 && mousePos.y == 7) {
                             quickLoad(gamePtr, "save.bin");
+                            move = &emptyBoard;
+                            selectedPiece = (sfVector2i){-1, -1};
                         }
 
                         // Selecting a piece
