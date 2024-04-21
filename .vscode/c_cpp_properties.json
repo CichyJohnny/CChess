@@ -5,8 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "C:/IT/vsprojects/external/SFML/include",
-                "C:/IT/vsprojects/external/SFML/lib"
-                
+                "C:/IT/vsprojects/external/SFML/lib"         
             ],
             "defines": [],
             "cStandard": "c11",

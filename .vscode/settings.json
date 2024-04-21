@@ -7,6 +7,10 @@
         "xstring": "c",
         "xutility": "c",
         "include_define.h": "c",
-        "clashing.h": "c"
+        "clashing.h": "c",
+        "stdio.h": "c",
+        "moveboard.h": "c",
+        "chessboard.h": "c",
+        "actions.h": "c"
     }
 }
