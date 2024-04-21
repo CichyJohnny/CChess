@@ -1,10 +1,12 @@
 #include "include_define.h"
 #include "moveboard.h"
+#include "chess_events.h"
+#include "moves.h"
 
 /*
 Void function that checks possible moves by calling function for selected piece
 */
-void canMove(struct figure (*chessPtr)[8][8], sfVector2i position, int moveBoard[8][8], struct game *gamePtr) {
+void canMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game *gamePtr) {
     int x = position.x, y = position.y;
     struct figure *figure = &(*chessPtr)[y][x];
 
@@ -89,7 +91,7 @@ void allMoves(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
             position = (sfVector2i){j, i};
             clearBoard((*chessPtr)[i][j].moveBoard);
 
-            canMove(chessPtr, position, (*chessPtr)[i][j].moveBoard, gamePtr);
+            canMove(chessPtr, position, gamePtr);
         }
     }
 }
@@ -99,7 +101,7 @@ void allPossibilities(struct figure (*chessPtr)[8][8], struct game *gamePtr, int
     struct figure (*nextChessPtr)[8][8] = &nextChess;
 
     struct figure movePiece;
-    struct figure empty = {'.', NULL, 0};
+    struct figure empty = {.name='.', .sprite=NULL};
 
     struct game copyGame = *gamePtr;
     struct game *copyGamePtr = &copyGame;

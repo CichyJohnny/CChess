@@ -12,29 +12,29 @@ sfSprite* createSprite(sfVector2f position, char name) {
 
     sfTexture* texture = NULL;
     if (name == 'p') {
-        texture = sfTexture_createFromFile("figures/black-pawn.png", NULL);
+        texture = sfTexture_createFromFile("res/figures/black-pawn.png", NULL);
     } else if (name == 'P') {
-        texture = sfTexture_createFromFile("figures/white-pawn.png", NULL);
+        texture = sfTexture_createFromFile("res/figures/white-pawn.png", NULL);
     } else if (name == 'r') {
-        texture = sfTexture_createFromFile("figures/black-rook.png", NULL);
+        texture = sfTexture_createFromFile("res/figures/black-rook.png", NULL);
     } else if (name == 'R') {
-        texture = sfTexture_createFromFile("figures/white-rook.png", NULL);
+        texture = sfTexture_createFromFile("res/figures/white-rook.png", NULL);
     } else if (name == 'n') {
-        texture = sfTexture_createFromFile("figures/black-knight.png", NULL);
+        texture = sfTexture_createFromFile("res/figures/black-knight.png", NULL);
     } else if (name == 'N') {
-        texture = sfTexture_createFromFile("figures/white-knight.png", NULL);
+        texture = sfTexture_createFromFile("res/figures/white-knight.png", NULL);
     } else if (name == 'b') {
-        texture = sfTexture_createFromFile("figures/black-bishop.png", NULL);
+        texture = sfTexture_createFromFile("res/figures/black-bishop.png", NULL);
     } else if (name == 'B') {
-        texture = sfTexture_createFromFile("figures/white-bishop.png", NULL);
+        texture = sfTexture_createFromFile("res/figures/white-bishop.png", NULL);
     } else if (name == 'q') {
-        texture = sfTexture_createFromFile("figures/black-queen.png", NULL);
+        texture = sfTexture_createFromFile("res/figures/black-queen.png", NULL);
     } else if (name == 'Q') {
-        texture = sfTexture_createFromFile("figures/white-queen.png", NULL);
+        texture = sfTexture_createFromFile("res/figures/white-queen.png", NULL);
     } else if (name == 'k') {
-        texture = sfTexture_createFromFile("figures/black-king.png", NULL);
+        texture = sfTexture_createFromFile("res/figures/black-king.png", NULL);
     } else if (name == 'K') {
-        texture = sfTexture_createFromFile("figures/white-king.png", NULL);
+        texture = sfTexture_createFromFile("res/figures/white-king.png", NULL);
     }
 
     sfSprite_setTexture(sprite, texture, sfTrue);
@@ -57,8 +57,6 @@ Simple void function for rendering every sprite on 8x8 chessboard
 void drawFigures(sfRenderWindow* window, struct figure chess[8][8]) {
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
-
-            sfVector2f position = {j * SQUARE_SIZE, i * SQUARE_SIZE};
             sfRenderWindow_drawSprite(window, chess[i][j].sprite, NULL);
         }
     }
@@ -87,15 +85,15 @@ void drawPromotion(sfRenderWindow* window, struct game *gamePtr) {
             sfSprite_setPosition(promotions[i], (sfVector2f){(8 + i)*SQUARE_SIZE, 7*SQUARE_SIZE});
         }
         if (gamePtr->turn == -1) {
-            sfSprite_setTexture(promotions[0], sfTexture_createFromFile("figures/white-queen.png", NULL), sfTrue);
-            sfSprite_setTexture(promotions[1], sfTexture_createFromFile("figures/white-rook.png", NULL), sfTrue);
-            sfSprite_setTexture(promotions[2], sfTexture_createFromFile("figures/white-bishop.png", NULL), sfTrue);
-            sfSprite_setTexture(promotions[3], sfTexture_createFromFile("figures/white-knight.png", NULL), sfTrue);
+            sfSprite_setTexture(promotions[0], sfTexture_createFromFile("res/figures/white-queen.png", NULL), sfTrue);
+            sfSprite_setTexture(promotions[1], sfTexture_createFromFile("res/figures/white-rook.png", NULL), sfTrue);
+            sfSprite_setTexture(promotions[2], sfTexture_createFromFile("res/figures/white-bishop.png", NULL), sfTrue);
+            sfSprite_setTexture(promotions[3], sfTexture_createFromFile("res/figures/white-knight.png", NULL), sfTrue);
         } else if (gamePtr->turn == 1) {
-            sfSprite_setTexture(promotions[0], sfTexture_createFromFile("figures/black-queen.png", NULL), sfTrue);
-            sfSprite_setTexture(promotions[1], sfTexture_createFromFile("figures/black-rook.png", NULL), sfTrue);
-            sfSprite_setTexture(promotions[2], sfTexture_createFromFile("figures/black-bishop.png", NULL), sfTrue);
-            sfSprite_setTexture(promotions[3], sfTexture_createFromFile("figures/black-knight.png", NULL), sfTrue);
+            sfSprite_setTexture(promotions[0], sfTexture_createFromFile("res/figures/black-queen.png", NULL), sfTrue);
+            sfSprite_setTexture(promotions[1], sfTexture_createFromFile("res/figures/black-rook.png", NULL), sfTrue);
+            sfSprite_setTexture(promotions[2], sfTexture_createFromFile("res/figures/black-bishop.png", NULL), sfTrue);
+            sfSprite_setTexture(promotions[3], sfTexture_createFromFile("res/figures/black-knight.png", NULL), sfTrue);
         }
 
         sfRectangleShape* square = sfRectangleShape_create();
@@ -117,8 +115,6 @@ void drawPromotion(sfRenderWindow* window, struct game *gamePtr) {
 }
 
 void saveLoadCreate(sfRectangleShape* (*saveLoadRect)[2]) {
-    sfColor color;
-
     sfVector2f savePos = {10 * SQUARE_SIZE, 7 * SQUARE_SIZE};
     (*saveLoadRect)[0] = sfRectangleShape_create();
     sfRectangleShape_setPosition((*saveLoadRect)[0], savePos);

@@ -1,6 +1,5 @@
-#include <SFML/Graphics.h>
-#include <SFML/Window.h>
 #include "include_define.h"
+
 
 struct game createGame() {
     struct game game;

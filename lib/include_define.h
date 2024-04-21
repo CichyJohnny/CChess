@@ -1,5 +1,6 @@
 #include <SFML/Graphics.h>
 #include <SFML/Window.h>
+#include <stdio.h>
 
 #ifndef INCUDE_DEFINE_H
 #define INCUDE_DEFINE_H

@@ -36,8 +36,7 @@ int countPoints(struct game *gamePtr) {
 
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
-            switch (gamePtr->chess[i][j].name)
-            {
+            switch (gamePtr->chess[i][j].name) {
             case 'Q':
                 points += 9;
                 break;

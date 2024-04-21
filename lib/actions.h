@@ -8,4 +8,5 @@ void promote(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2i m
 void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2i selectedPiece, sfVector2i mousePos);
 
 
+
 #endif

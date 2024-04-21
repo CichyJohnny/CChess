@@ -1,12 +1,12 @@
-#include "headers/include_define.h"
-#include "headers/sprites.h"
-#include "headers/chessboard.h"
-#include "headers/moveboard.h"
-#include "headers/chess_events.h"
-#include "headers/clashing.h"
-#include "headers/actions.h"
-#include "headers/texts.h"
-#include "headers/save_load.h"
+#include "lib/include_define.h"
+#include "lib/sprites.h"
+#include "lib/chessboard.h"
+#include "lib/moveboard.h"
+#include "lib/chess_events.h"
+#include "lib/clashing.h"
+#include "lib/actions.h"
+#include "lib/texts.h"
+#include "lib/save_load.h"
 
 int main() {
     // Window setting
@@ -48,7 +48,7 @@ int main() {
 
 
     // Figures init
-    struct figure (*chessPtr)[8][8] = gamePtr->chess;
+    struct figure (*chessPtr)[8][8] = &gamePtr->chess;
 
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
@@ -193,6 +193,8 @@ int main() {
                             }
 
                             selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
+
+
                             
                             sprintf(points, "Points: %d", countPoints(gamePtr));
                             sfText_setString(text_points, points);
@@ -263,6 +265,7 @@ int main() {
     sfText_destroy(text_turn);
     sfText_destroy(text_event);
     sfText_destroy(text_count);
+    sfText_destroy(text_points);
     sfRectangleShape_destroy(saveLoadRect[0]);
     sfRectangleShape_destroy(saveLoadRect[1]);
     sfFont_destroy(font);

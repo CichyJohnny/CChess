@@ -1,5 +1,7 @@
 #include "include_define.h"
 #include "clashing.h"
+#include "sprites.h"
+#include "moveboard.h"
 
 void shortCastling(struct figure (*chessPtr)[8][8], sfVector2i position, struct game *gamePtr) {
     int x = position.x, y = position.y;
@@ -83,7 +85,7 @@ void longCastling(struct figure (*chessPtr)[8][8], sfVector2i position, struct g
 
 void whiteShortClash(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
     struct figure movePiece;
-    struct figure empty = {'.', NULL, 0};
+    struct figure empty = {.name='.', .sprite=NULL};
     
     gamePtr->shortClash = 0;
     gamePtr->longClash = 0;
@@ -111,7 +113,7 @@ void whiteShortClash(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
 
 void blackShortClash(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
     struct figure movePiece;
-    struct figure empty = {'.', NULL, 0};
+    struct figure empty = {.name='.', .sprite=NULL};
     
     gamePtr->shortClash = 0;
     gamePtr->longClash = 0;
@@ -139,7 +141,7 @@ void blackShortClash(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
 
 void whiteLongClash(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
     struct figure movePiece;
-    struct figure empty = {'.', NULL, 0};
+    struct figure empty = {.name='.', .sprite=NULL};
     
     gamePtr->shortClash = 0;
     gamePtr->longClash = 0;
@@ -167,7 +169,7 @@ void whiteLongClash(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
 
 void blackLongClash(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
     struct figure movePiece;
-    struct figure empty = {'.', NULL, 0};
+    struct figure empty = {.name='.', .sprite=NULL};
     
     gamePtr->shortClash = 0;
     gamePtr->longClash = 0;

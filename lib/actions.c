@@ -1,5 +1,8 @@
 #include "include_define.h"
 #include "actions.h"
+#include "moveboard.h"
+#include "chess_events.h"
+#include "sprites.h"
 
 void enPassant(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2i selectedPiece, sfVector2i mousePos, int enPas) {
     struct figure movePiece;
@@ -24,32 +27,34 @@ void enPassant(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2i
 void promote(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2i mousePos) {
     if (mousePos.x >= 8 && mousePos.y == 7) {
         if (gamePtr->turn == -1) {
-            if (mousePos.x == 8) {
+            switch (mousePos.x) {
+            case 8:
                 (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'Q';
-            
-            } else if (mousePos.x == 9) {
+                break;
+            case 9:
                 (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'R';
-
-            } else if (mousePos.x == 10) {
+                break;
+            case 10:
                 (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'B';
-                
-            } else if (mousePos.x == 11) {
+                break;
+            case 11:
                 (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'N';
-
+                break;
             }
         } else if (gamePtr->turn == 1) {
-            if (mousePos.x == 8) {
+            switch (mousePos.x) {
+            case 8:
                 (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'q';
-            
-            } else if (mousePos.x == 9) {
+                break;
+            case 9:
                 (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'r';
-
-            } else if (mousePos.x == 10) {
+                break;
+            case 10:
                 (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'b';
-                
-            } else if (mousePos.x == 11) {
+                break;
+            case 11:
                 (*chessPtr)[gamePtr->promote.y][gamePtr->promote.x].name = 'n';
-
+                break;
             }
         }
         
@@ -61,7 +66,7 @@ void promote(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2i m
 
 void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2i selectedPiece, sfVector2i mousePos) {
     struct figure movePiece;
-    struct figure empty = {'.', NULL, 0};
+    struct figure empty = {.name='.', .sprite=NULL};
 
     movePiece = (*chessPtr)[selectedPiece.y][selectedPiece.x];
     (*chessPtr)[selectedPiece.y][selectedPiece.x] = empty; // clear square
@@ -136,4 +141,10 @@ void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2
     } else if (movePiece.name == 'p' && mousePos.y == 7) {
         gamePtr->promote = mousePos;
     }
+}
+
+void endTurn(struct game *gamePtr) {
+    gamePtr->turn = -gamePtr->turn; // change players
+    gamePtr->numTurn++;
+
 }

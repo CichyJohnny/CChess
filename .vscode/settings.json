@@ -11,6 +11,13 @@
         "stdio.h": "c",
         "moveboard.h": "c",
         "chessboard.h": "c",
-        "actions.h": "c"
+        "actions.h": "c",
+        "save_load.h": "c",
+        "sprites.h": "c",
+        "window.h": "c",
+        "audio.h": "c",
+        "music.h": "c",
+        "sound.h": "c",
+        "soundbuffer.h": "c"
     }
 }

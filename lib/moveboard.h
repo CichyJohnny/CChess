@@ -4,7 +4,7 @@
 /*
 Void function that checks possible moves by calling function for selected piece
 */
-void canMove(struct figure (*chessPtr)[8][8], sfVector2i position, int moveBoard[8][8], struct game *gamePtr);
+void canMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game *gamePtr);
 
 /*
 Void function that render green squares representing possible moves for selected piece

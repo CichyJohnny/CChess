@@ -213,7 +213,7 @@ void kingMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game 
     int color = isWhiteBlack(figure->name);
 
     sfVector2i dirs[8] = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
-    int vec_x, vec_y, check;
+    int vec_x, vec_y;
     
     for (int i=0; i<8; i++) {
         vec_x = x + dirs[i].x;

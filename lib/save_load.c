@@ -1,6 +1,6 @@
 #include "include_define.h"
 #include "save_load.h"
-#include <stdio.h>
+#include "sprites.h"
 
 void quickSave(struct game *gamePtr, const char *filename) {
     FILE *fp;
