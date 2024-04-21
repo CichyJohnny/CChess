@@ -8,7 +8,7 @@ sfText* textTurn(sfFont* font) {
     sfText_setString(text_turn, "White Turn!");
     sfText_setFont(text_turn, font);
     sfText_setCharacterSize(text_turn, 48);
-    sfText_setPosition(text_turn, (sfVector2f){9 * SQUARE_SIZE, 1 * SQUARE_SIZE});
+    sfText_setPosition(text_turn, (sfVector2f){10 * SQUARE_SIZE - sfText_getLocalBounds(text_turn).width / 2, 1 * SQUARE_SIZE});
 
     return text_turn;
 }
@@ -17,7 +17,7 @@ sfText* textEvent(sfFont* font) {
     sfText* text_event = sfText_create();
     sfText_setFont(text_event, font);
     sfText_setCharacterSize(text_event, 48);
-    sfText_setPosition(text_event, (sfVector2f){9 * SQUARE_SIZE, 2 * SQUARE_SIZE});
+    sfText_setPosition(text_event, (sfVector2f){10 * SQUARE_SIZE - sfText_getLocalBounds(text_event).width / 2, 2 * SQUARE_SIZE});
 
     return text_event;
 }

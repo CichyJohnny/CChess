@@ -212,6 +212,7 @@ int main() {
                         } else {
                             sfText_setString(text_event, "");
                         }
+                        sfText_setPosition(text_event, (sfVector2f){10 * SQUARE_SIZE - sfText_getLocalBounds(text_event).width / 2, 2 * SQUARE_SIZE});
                     }
                 }
             }
@@ -227,6 +228,7 @@ int main() {
                     sfText_setString(text_turn, "Draw!");
                     sfText_setString(text_event, "Stale Mate");
                 }
+                sfText_setPosition(text_event, (sfVector2f){10 * SQUARE_SIZE - sfText_getLocalBounds(text_event).width / 2, 2 * SQUARE_SIZE});
             }
         }
 
