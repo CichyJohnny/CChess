@@ -25,13 +25,14 @@ int main() {
     struct game *gamePtr = &game;
 
     int enPas = 0;
-    char count[10];
+    char count[9], points[9];
 
     sfFont* font = sfFont_createFromFile("res/arial.ttf");
     
     sfText* text_turn = textTurn(font);
     sfText* text_event = textEvent(font);
     sfText* text_count = textCount(font);
+    sfText* text_points = textPoints(font);
     
     // Start position init
     char figures[8][8] = {
@@ -94,6 +95,10 @@ int main() {
 
                         if (gamePtr->promote.x != -1) {
                             promote(chessPtr, gamePtr, mousePos);
+
+                            sprintf(points, "%d", countPoints(gamePtr));
+                            sfText_setString(text_points, points);
+                            sfText_setPosition(text_points, (sfVector2f){12*SQUARE_SIZE - sfText_getLocalBounds(text_points).width - 10, 10});
                         }
 
                         else if (mousePos.x == 10 && mousePos.y == 7) {
@@ -151,68 +156,66 @@ int main() {
 
 
                         // Check for clashes
-                        else if (game.shortClash == 1 && mousePos.x == 6 && mousePos.y == 7) {
-                            // White short clashing
-                            whiteShortClash(chessPtr, gamePtr);
-
-                            move = &emptyBoard;;
-                            selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
-                            game.enPassant = (sfVector2i){-1, -1};
-                        } else if (game.shortClash == -1 && mousePos.x == 6 && mousePos.y == 0) {
-                            // Black short clashing
-                            blackShortClash(chessPtr, gamePtr);
-
-                            move = &emptyBoard;;
-                            selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
-                            game.enPassant = (sfVector2i){-1, -1};
-                        } else if (game.longClash == 1 && mousePos.x == 2 && mousePos.y == 7) {
-                            // White long clashing
-                            whiteLongClash(chessPtr, gamePtr);
-
-                            move = &emptyBoard;;
-                            selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
-                            game.enPassant = (sfVector2i){-1, -1};
-                        }  else if (game.longClash == -1 && mousePos.x == 2 && mousePos.y == 0) {
-                            // Black long clashing
-                            blackLongClash(chessPtr, gamePtr);
-
-                            move = &emptyBoard;
-                            selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
-                            game.enPassant = (sfVector2i){-1, -1};
-                        } 
-                        //  En passant
-                        else if (enPas != 0 && mousePos.x == game.enPassant.x && mousePos.y == game.enPassant.y) {
-                            enPassant(chessPtr, gamePtr, selectedPiece, mousePos, enPas);
-
-                            move = &emptyBoard;
-                            selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
-                            game.enPassant = (sfVector2i){-1, -1};
-                        }
-
-                        // Normal move
                         else {
-                            game.enPassant = (sfVector2i){-1, -1};
+                            if (game.shortClash == 1 && mousePos.x == 6 && mousePos.y == 7) {
+                                // White short clashing
+                                whiteShortClash(chessPtr, gamePtr);
 
-                            normalMove(chessPtr, gamePtr, selectedPiece, mousePos);
+                                game.enPassant = (sfVector2i){-1, -1};
+                            } else if (game.shortClash == -1 && mousePos.x == 6 && mousePos.y == 0) {
+                                // Black short clashing
+                                blackShortClash(chessPtr, gamePtr);
 
-                            move = &emptyBoard;
+                                game.enPassant = (sfVector2i){-1, -1};
+                            } else if (game.longClash == 1 && mousePos.x == 2 && mousePos.y == 7) {
+                                // White long clashing
+                                whiteLongClash(chessPtr, gamePtr);
+
+                                game.enPassant = (sfVector2i){-1, -1};
+                            }  else if (game.longClash == -1 && mousePos.x == 2 && mousePos.y == 0) {
+                                // Black long clashing
+                                blackLongClash(chessPtr, gamePtr);
+
+                                game.enPassant = (sfVector2i){-1, -1};
+                            } 
+                            //  En passant
+                            else if (enPas != 0 && mousePos.x == game.enPassant.x && mousePos.y == game.enPassant.y) {
+                                enPassant(chessPtr, gamePtr, selectedPiece, mousePos, enPas);
+
+                                game.enPassant = (sfVector2i){-1, -1};
+                            }
+
+                            // Normal move
+                            else {
+                                game.enPassant = (sfVector2i){-1, -1};
+
+                                normalMove(chessPtr, gamePtr, selectedPiece, mousePos);
+                            }
+
                             selectedPiece = (sfVector2i){-1, -1}; // deselect a piece
-                        }
+                            
+                            sprintf(points, "Points: %d", countPoints(gamePtr));
+                            sfText_setString(text_points, points);
+                            sfText_setPosition(text_points, (sfVector2f){12*SQUARE_SIZE - sfText_getLocalBounds(text_points).width - 10, 10});
 
-                        if (game.turn == 1) {
-                            sfText_setString(text_turn, "White Turn!");
-                        } else {
-                            sfText_setString(text_turn, "Black Turn!");
-                        }
+                            sprintf(count, "Turn: %d", game.numTurn/2);
+                            sfText_setString(text_count, count);
 
-                        if (game.check == 1) {
-                            sfText_setString(text_event, "White Check!");
-                        } else if (game.check == -1) {
-                            sfText_setString(text_event, "Black Check!");
-                        } else {
-                            sfText_setString(text_event, "");
+                            if (game.turn == 1) {
+                                sfText_setString(text_turn, "White Turn!");
+                            } else {
+                                sfText_setString(text_turn, "Black Turn!");
+                            }
+
+                            if (game.check == 1) {
+                                sfText_setString(text_event, "White Check!");
+                            } else if (game.check == -1) {
+                                sfText_setString(text_event, "Black Check!");
+                            } else {
+                                sfText_setString(text_event, "");
+                            }
+                            sfText_setPosition(text_event, (sfVector2f){10 * SQUARE_SIZE - sfText_getLocalBounds(text_event).width / 2, 2 * SQUARE_SIZE});
                         }
-                        sfText_setPosition(text_event, (sfVector2f){10 * SQUARE_SIZE - sfText_getLocalBounds(text_event).width / 2, 2 * SQUARE_SIZE});
                     }
                 }
             }
@@ -237,9 +240,7 @@ int main() {
         sfRenderWindow_drawSprite(window, background, NULL);
         sfRenderWindow_drawText(window, text_turn, NULL);
         sfRenderWindow_drawText(window, text_event, NULL);
-
-        sprintf(count, "%d", game.numTurn/2);
-        sfText_setString(text_count, count);
+        sfRenderWindow_drawText(window, text_points, NULL);
         sfRenderWindow_drawText(window, text_count, NULL);
 
         drawChessboard(window, squares);

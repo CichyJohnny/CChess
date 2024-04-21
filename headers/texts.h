@@ -27,9 +27,22 @@ sfText* textCount(sfFont* font) {
 
     sfText_setFont(text_count, font);
     sfText_setCharacterSize(text_count, 24);
+    sfText_setString(text_count, "Turn: 0");
     sfText_setPosition(text_count, (sfVector2f){10 + 8 * SQUARE_SIZE, 10});
 
     return text_count;
+}
+
+sfText* textPoints(sfFont* font) {
+    sfText* text_points = sfText_create();
+
+    sfText_setFont(text_points, font);
+    sfText_setCharacterSize(text_points, 24);
+    sfText_setPosition(text_points, (sfVector2f){10 + 9 * SQUARE_SIZE, 10});
+    sfText_setString(text_points, "Points: 0");
+    sfText_setPosition(text_points, (sfVector2f){12*SQUARE_SIZE - sfText_getLocalBounds(text_points).width - 10, 10});
+
+    return text_points;
 }
 
 #endif
