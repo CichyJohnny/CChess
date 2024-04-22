@@ -3,9 +3,6 @@
 #include "chess_events.h"
 #include "moves.h"
 
-/*
-Void function that checks possible moves by calling function for selected piece
-*/
 void canMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game *gamePtr) {
     int x = position.x, y = position.y;
     struct figure *figure = &(*chessPtr)[y][x];
@@ -25,9 +22,6 @@ void canMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game *
     }
 }
 
-/*
-Void function that render green squares representing possible moves for selected piece
-*/
 void drawMoves(sfRenderWindow* window, int moveBoard[8][8], struct game *gamePtr) {
     int radius = 32;
     int thick = 5;
@@ -48,7 +42,7 @@ void drawMoves(sfRenderWindow* window, int moveBoard[8][8], struct game *gamePtr
 
                 sfCircleShape_destroy(circle);
 
-                if (gamePtr->chess[i][j].name != '.') {
+                if (gamePtr->chess[i][j].name != '.' || (gamePtr->enPassant.x == j && gamePtr->enPassant.y == i)) {
 
                     sfVector2f pos2 = {thick + j * SQUARE_SIZE, thick + i * SQUARE_SIZE};
 
@@ -96,9 +90,9 @@ void allMoves(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
     }
 }
 
-void allPossibilities(struct figure (*chessPtr)[8][8], struct game *gamePtr, int check) {
-    struct figure nextChess[8][8];
-    struct figure (*nextChessPtr)[8][8] = &nextChess;
+void allPossibilities(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
+    struct figure newChess[8][8];
+    struct figure (*newChessPtr)[8][8] = &newChess;
 
     struct figure movePiece;
     struct figure empty = {.name='.', .sprite=NULL};
@@ -110,34 +104,34 @@ void allPossibilities(struct figure (*chessPtr)[8][8], struct game *gamePtr, int
 
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
-            if (isWhiteBlack((*chessPtr)[i][j].name) == check) {
+            if (isWhiteBlack((*chessPtr)[i][j].name) == gamePtr->turn) {
 
                 for (int n=0; n<8; n++) {
                     for (int m=0; m<8; m++) {
                         if((*chessPtr)[i][j].moveBoard[n][m] == 1) {
 
                             // Copy of chess list
-                            copyChess(chessPtr, nextChessPtr);
+                            copyChess(chessPtr, newChessPtr);
                             copyGame = *gamePtr;
 
                             // Moving piece on copied board
-                            movePiece = nextChess[i][j];
-                            nextChess[i][j] = empty; // clear square
-                            nextChess[n][m] = movePiece; // movie piece
+                            movePiece = newChess[i][j];
+                            newChess[i][j] = empty; // clear square
+                            newChess[n][m] = movePiece; // movie piece
 
                             // Computing all moves after the move
-                            allMoves(nextChessPtr, copyGamePtr);
+                            allMoves(newChessPtr, copyGamePtr);
 
                             // We check if there is a check after the move
-                            newWhiteCheck = isWhiteCheck(nextChessPtr, copyGamePtr);
-                            newBlackCheck = isBlackCheck(nextChessPtr, copyGamePtr);
+                            newWhiteCheck = isWhiteCheck(newChessPtr, copyGamePtr);
+                            newBlackCheck = isBlackCheck(newChessPtr, copyGamePtr);
 
-                            if (newWhiteCheck == check || newBlackCheck == check) {
+                            if (newWhiteCheck == gamePtr->turn || newBlackCheck == gamePtr->turn) {
                                 // You still are checked
                                 // Discard changes
                                 (*chessPtr)[i][j].moveBoard[n][m] = 0; // Disallow this move
-                                nextChess[i][j] = movePiece; // revert move
-                                nextChess[n][m] = empty; // revert move
+                                newChess[i][j] = movePiece; // revert move
+                                newChess[n][m] = empty; // revert move
                             } else {
                                 gamePtr->possibleMoves++;
                             }

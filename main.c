@@ -35,9 +35,19 @@ int main() {
     sfText* text_points = textPoints(font);
     
     // Start position init
+    // char figures[8][8] = {
+    //     {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
+    //     {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
+    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
+    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
+    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
+    //     {'.', '.', '.', '.', '.', '.', '.', '.'},
+    //     {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+    //     {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
+    //     };
     char figures[8][8] = {
-        {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
-        {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
+        {'.', '.', '.', '.', 'k', '.', '.', 'r'},
+        {'.', '.', 'p', 'p', 'p', 'p', 'p', 'p'},
         {'.', '.', '.', '.', '.', '.', '.', '.'},
         {'.', '.', '.', '.', '.', '.', '.', '.'},
         {'.', '.', '.', '.', '.', '.', '.', '.'},
@@ -247,7 +257,7 @@ int main() {
 
         drawChessboard(window, squares);
         drawMoves(window, *move, gamePtr);
-        drawFigures(window, (*chessPtr));
+        drawFigures(window, *chessPtr);
         drawSaveLoad(window, &saveLoadRect);
         drawPromotion(window, gamePtr);
 

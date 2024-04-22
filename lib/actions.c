@@ -61,6 +61,52 @@ void promote(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2i m
         allMoves(chessPtr, gamePtr);
         spritesUpdate(chessPtr);
         gamePtr->promote = (sfVector2i){-1, -1};
+
+        int isPat = 0;
+
+        if (gamePtr->turn == 1) {
+            gamePtr->check = isWhiteCheck(chessPtr, gamePtr);
+        } else {
+            gamePtr->check = isBlackCheck(chessPtr, gamePtr);
+        }
+
+        if (gamePtr->check != 0) {
+            // If check or mate
+            // gamePtr->event = 1;
+
+            allPossibilities(chessPtr, gamePtr);
+            if (gamePtr->possibleMoves == 0) {
+                // If there no way to defend king, there is mat
+
+                gamePtr->event = 2;
+            } else {
+                // Else continue the game
+                gamePtr->possibleMoves = 0;
+            }
+        } else {
+            // Check if move does not allow check
+            allPossibilities(chessPtr, gamePtr);
+
+            // If pat
+            if (gamePtr->possibleMoves == 0 && gamePtr->check == 0) {
+                gamePtr->event = 3;
+            } else {
+                for (int i=0; i<8; i++) {
+                    for (int j=0; j<8; j++) {
+                        if ((*chessPtr)[i][j].name != 'K' && (*chessPtr)[i][j].name != 'k' && (*chessPtr)[i][j].name != '.') {
+                            isPat = 1;
+                        }
+                    }
+                }
+                if (isPat == 0) {
+                    gamePtr->event = 3;
+                }
+                isPat = 0;
+            }
+    
+            // Normal move
+            gamePtr->possibleMoves = 0;
+        }
     }
 }
 
@@ -92,9 +138,9 @@ void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2
 
     if (gamePtr->check != 0) {
         // If check or mate
-        gamePtr->event = 1;
+        // gamePtr->event = 1;
 
-        allPossibilities(chessPtr, gamePtr, gamePtr->check);
+        allPossibilities(chessPtr, gamePtr);
         if (gamePtr->possibleMoves == 0) {
             // If there no way to defend king, there is mat
 
@@ -105,7 +151,7 @@ void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2
         }
     } else {
         // Check if move does not allow check
-        allPossibilities(chessPtr, gamePtr, gamePtr->turn);
+        allPossibilities(chessPtr, gamePtr);
 
         // If pat
         if (gamePtr->possibleMoves == 0 && gamePtr->check == 0) {
@@ -141,10 +187,4 @@ void normalMove(struct figure (*chessPtr)[8][8], struct game *gamePtr, sfVector2
     } else if (movePiece.name == 'p' && mousePos.y == 7) {
         gamePtr->promote = mousePos;
     }
-}
-
-void endTurn(struct game *gamePtr) {
-    gamePtr->turn = -gamePtr->turn; // change players
-    gamePtr->numTurn++;
-
 }

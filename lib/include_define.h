@@ -5,35 +5,39 @@
 #ifndef INCUDE_DEFINE_H
 #define INCUDE_DEFINE_H
 
-#define SQUARE_SIZE 128 // base square size equal to textures resolution
+#define SQUARE_SIZE 128 // Base square size equal to textures resolution
 
 // Structure of chess piece
 struct figure {
-    char name; // bts name
-    sfSprite* sprite; // its sprite
-    int num; // times of being moved
-    int moveBoard[8][8]; // moveBoard of possible moves
-    int possibleMoves; // number of possible moves
+    char name; // Its name
+    sfSprite* sprite; // Its sprite with texture
+    int num; // Times of being moved
+    int possibleMoves; // Number of possible moves
+    int moveBoard[8][8]; // MoveBoard of possible moves
 };
 
 // Structure of game's properties
 struct game {
-    int turn; // which player it's turn (1 if white's, -1 if black's)
-    int numTurn;
-    int win; // 0 if game is still on, 1 if white won, -1 if black won, 2 if pat
-    int whiteBoard[8][8];
-    int blackBoard[8][8];
-    int event;
-    int possibleMoves;
-    int shortClash;
-    int longClash;
-    int check;
-    sfVector2i enPassant;
-    sfVector2i promote;
+    int turn; // Player's turn (1 if white's, -1 if black's)
+    int numTurn; // Number of turn
+    int whiteBoard[8][8]; // Board of fields being attacked by white pieces
+    int blackBoard[8][8]; // Board of fields being attacked by black pieces
+    int event; // Current chess event (0 if none, 2 if mate, 3 if stale mate)
+    int possibleMoves; // Number of legal moves
+    int shortClash; // Is short clash legal (0 if not, 1 if for white, -1 if for black)
+    int longClash; // Is black clash legal (0 if not, 1 if for white, -1 if for black)
+    int check;  // Is king checked (0 if not, 1 if white is, -1 if black is)
+    sfVector2i enPassant; // Position of possible en passant
+    sfVector2i promote; // Position of promoted pawn
 
-    struct figure chess[8][8];
+    struct figure chess[8][8]; // chess 8x8 array with pieces
 };
 
+////////////////////////////////////////////////////////////
+/// \brief Init game structure with essential parameters.
+///
+/// \return a new struct game with initial parameters
+////////////////////////////////////////////////////////////
 struct game createGame();
 
 #endif

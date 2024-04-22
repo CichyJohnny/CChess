@@ -1,42 +1,49 @@
 #include "include_define.h"
 #include "sprites.h"
 
-/*
-sfSprite function for creating sprite for given piece and position
-- for every piece is created texture from file
-- textures are stored in directory figures/ in 128x128px resolution
-*/
 sfSprite* createSprite(sfVector2f position, char name) {
     sfSprite* sprite = sfSprite_create();
     sfSprite_setPosition(sprite, position);
 
     sfTexture* texture = NULL;
-    if (name == 'p') {
-        texture = sfTexture_createFromFile("res/figures/black-pawn.png", NULL);
-    } else if (name == 'P') {
-        texture = sfTexture_createFromFile("res/figures/white-pawn.png", NULL);
-    } else if (name == 'r') {
-        texture = sfTexture_createFromFile("res/figures/black-rook.png", NULL);
-    } else if (name == 'R') {
-        texture = sfTexture_createFromFile("res/figures/white-rook.png", NULL);
-    } else if (name == 'n') {
-        texture = sfTexture_createFromFile("res/figures/black-knight.png", NULL);
-    } else if (name == 'N') {
-        texture = sfTexture_createFromFile("res/figures/white-knight.png", NULL);
-    } else if (name == 'b') {
-        texture = sfTexture_createFromFile("res/figures/black-bishop.png", NULL);
-    } else if (name == 'B') {
-        texture = sfTexture_createFromFile("res/figures/white-bishop.png", NULL);
-    } else if (name == 'q') {
-        texture = sfTexture_createFromFile("res/figures/black-queen.png", NULL);
-    } else if (name == 'Q') {
-        texture = sfTexture_createFromFile("res/figures/white-queen.png", NULL);
-    } else if (name == 'k') {
-        texture = sfTexture_createFromFile("res/figures/black-king.png", NULL);
-    } else if (name == 'K') {
-        texture = sfTexture_createFromFile("res/figures/white-king.png", NULL);
-    }
-
+    switch (name) {
+        case 'p':
+            texture = sfTexture_createFromFile("res/figures/black-pawn.png", NULL);
+            break;
+        case 'P':
+            texture = sfTexture_createFromFile("res/figures/white-pawn.png", NULL);
+            break;
+        case 'r':
+            texture = sfTexture_createFromFile("res/figures/black-rook.png", NULL);
+            break;
+        case 'R':
+            texture = sfTexture_createFromFile("res/figures/white-rook.png", NULL);
+            break;
+        case 'n':
+            texture = sfTexture_createFromFile("res/figures/black-knight.png", NULL);
+            break;
+        case 'N':
+            texture = sfTexture_createFromFile("res/figures/white-knight.png", NULL);
+            break;
+        case 'b':
+            texture = sfTexture_createFromFile("res/figures/black-bishop.png", NULL);
+            break;
+        case 'B':
+            texture = sfTexture_createFromFile("res/figures/white-bishop.png", NULL);
+            break;
+        case 'q':
+            texture = sfTexture_createFromFile("res/figures/black-queen.png", NULL);
+            break;
+        case 'Q':
+            texture = sfTexture_createFromFile("res/figures/white-queen.png", NULL);
+            break;
+        case 'k':
+            texture = sfTexture_createFromFile("res/figures/black-king.png", NULL);
+            break;
+        case 'K':
+            texture = sfTexture_createFromFile("res/figures/white-king.png", NULL);
+            break;
+        }
     sfSprite_setTexture(sprite, texture, sfTrue);
 
     return sprite;
@@ -51,9 +58,6 @@ sfSprite* createBackground() {
     return background;
 }
 
-/*
-Simple void function for rendering every sprite on 8x8 chessboard
-*/
 void drawFigures(sfRenderWindow* window, struct figure chess[8][8]) {
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
@@ -62,16 +66,15 @@ void drawFigures(sfRenderWindow* window, struct figure chess[8][8]) {
     }
 }
 
-void spritesUpdate(struct figure (*chess)[8][8]) {
+void spritesUpdate(struct figure (*chessPtr)[8][8]) {
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
             sfVector2f position = {j * SQUARE_SIZE, i * SQUARE_SIZE};
 
-            sfSprite_destroy((*chess)[i][j].sprite);
-            (*chess)[i][j].sprite = createSprite(position, (*chess)[i][j].name);
-            // I have no idea why i have to create new sprite instead of just changing the sprite's position
-            // sfSprite_setPosition((*chess)[i][j].sprite, position);
-            
+            sfSprite_destroy((*chessPtr)[i][j].sprite);
+            (*chessPtr)[i][j].sprite = createSprite(position, (*chessPtr)[i][j].name);
+            // I have no idea why I have to create new sprite instead of just updating the sprite's position
+            // sfSprite_setPosition((*chessPtr)[i][j].sprite, position);
         }
     }
 }
@@ -98,6 +101,7 @@ void drawPromotion(sfRenderWindow* window, struct game *gamePtr) {
 
         sfRectangleShape* square = sfRectangleShape_create();
         int thick = 8;
+
         sfRectangleShape_setSize(square, (sfVector2f){SQUARE_SIZE - 2*thick, SQUARE_SIZE - 2*thick});
         sfRectangleShape_setFillColor(square, sfWhite);
         sfRectangleShape_setOutlineThickness(square, thick);
@@ -116,18 +120,17 @@ void drawPromotion(sfRenderWindow* window, struct game *gamePtr) {
 
 void saveLoadCreate(sfRectangleShape* (*saveLoadRect)[2]) {
     sfVector2f savePos = {10 * SQUARE_SIZE, 7 * SQUARE_SIZE};
+    sfVector2f loadPos = {11 * SQUARE_SIZE, 7 * SQUARE_SIZE};
+
     (*saveLoadRect)[0] = sfRectangleShape_create();
     sfRectangleShape_setPosition((*saveLoadRect)[0], savePos);
     sfRectangleShape_setSize((*saveLoadRect)[0], (sfVector2f){SQUARE_SIZE, SQUARE_SIZE});
     sfRectangleShape_setTexture((*saveLoadRect)[0], sfTexture_createFromFile("res/save.png", NULL), sfTrue);
 
-    sfVector2f loadPos = {11 * SQUARE_SIZE, 7 * SQUARE_SIZE};
     (*saveLoadRect)[1] = sfRectangleShape_create();
     sfRectangleShape_setPosition((*saveLoadRect)[1], loadPos);
     sfRectangleShape_setSize((*saveLoadRect)[1], (sfVector2f){SQUARE_SIZE, SQUARE_SIZE});
     sfRectangleShape_setTexture((*saveLoadRect)[1], sfTexture_createFromFile("res/load.png", NULL), sfTrue);
-
-
 }
 
 void drawSaveLoad(sfRenderWindow* window, sfRectangleShape* (*saveLoadRect)[2]) {

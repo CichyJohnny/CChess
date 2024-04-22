@@ -1,10 +1,10 @@
 #include "include_define.h"
 #include "chess_events.h"
 
-void copyChess(struct figure (*chessPtr)[8][8], struct figure (*prevChessPtr)[8][8]) {
+void copyChess(struct figure (*chessPtr)[8][8], struct figure (*newChessPtr)[8][8]) {
      for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
-            (*prevChessPtr)[i][j] = (*chessPtr)[i][j];
+            (*newChessPtr)[i][j] = (*chessPtr)[i][j];
         }
      }
 }
