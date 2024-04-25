@@ -30,7 +30,8 @@
                 "-lcsfml-window",
                 "-lcsfml-system",
                 "-lcsfml-audio",
-                "-mwindows"
+                "-mwindows",
+                "res/my.o"
             ],
             "group": {
                 "kind": "build",

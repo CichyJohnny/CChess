@@ -5,7 +5,7 @@
             "name": "Run",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/main.exe",
+            "program": "${workspaceFolder}/CChess.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
