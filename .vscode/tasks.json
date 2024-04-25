@@ -21,11 +21,11 @@
                 "lib/chess_events.c",
                 "lib/actions.c",
                 "-o",
-                "main",
+                "CChess",
                 "-I",
-                "C:/IT/vsprojects/external/SFML/include", // tu zmieniasz na swoje
+                "C:/IT/vsprojects/external/SFML/include", // Here path to your SFML (CSFML) library/include
                 "-L",
-                "C:/IT/vsprojects/external/SFML/lib/gcc", // tu też
+                "C:/IT/vsprojects/external/SFML/lib/gcc", // Here path to your SFML (CSFML) library/lib/gcc
                 "-lcsfml-graphics",
                 "-lcsfml-window",
                 "-lcsfml-system",

@@ -6,10 +6,9 @@
 void shortCastling(struct figure (*chessPtr)[8][8], sfVector2i position, struct game *gamePtr) {
     int x = position.x, y = position.y;
     struct figure *figure = &(*chessPtr)[y][x];
-    
 
     if (figure->name == 'K' && x == 4 && y == 7 && (*chessPtr)[7][7].name == 'R') {
-        // King and rook are on positions
+        // White king and rook are on positions
 
         if (figure->num == 0 && (*chessPtr)[7][7].num == 0) {
             // They were previously not moved
@@ -25,7 +24,7 @@ void shortCastling(struct figure (*chessPtr)[8][8], sfVector2i position, struct 
             }
         }
     } else if (figure->name == 'k' && x == 4 && y == 0 && (*chessPtr)[0][7].name == 'r') {
-        // King and rook are on positions
+        // Black king and rook are on positions
 
         if (figure->num == 0 && (*chessPtr)[0][7].num == 0) {
             // They were previously not moved
@@ -46,10 +45,9 @@ void shortCastling(struct figure (*chessPtr)[8][8], sfVector2i position, struct 
 void longCastling(struct figure (*chessPtr)[8][8], sfVector2i position, struct game *gamePtr) {
     int x = position.x, y = position.y;
     struct figure *figure = &(*chessPtr)[y][x];
-    
 
     if (figure->name == 'K' && x == 4 && y == 7 && (*chessPtr)[7][0].name == 'R') {
-        // King and rook are on positions
+        // White king and rook are on positions
 
         if (figure->num == 0 && (*chessPtr)[7][0].num == 0) {
             // They were previously not moved
@@ -65,7 +63,7 @@ void longCastling(struct figure (*chessPtr)[8][8], sfVector2i position, struct g
             }
         }
     } else if (figure->name == 'k' && x == 4 && y == 0 && (*chessPtr)[0][0].name == 'r') {
-        // King and rook are on positions
+        // Black king and rook are on positions
 
         if (figure->num == 0 && (*chessPtr)[0][0].num == 0) {
             // They were previously not moved
@@ -101,13 +99,13 @@ void whiteShortClash(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
     (*chessPtr)[7][5] = movePiece;
 
 
-    gamePtr->turn = -gamePtr->turn; // change players
+    gamePtr->turn = -gamePtr->turn;
     gamePtr->event = 0;
     gamePtr->numTurn++;
     (*chessPtr)[7][6].num++; // +1 to number of times a king was moved
     (*chessPtr)[7][5].num++; // +1 to number of times a rook was moved
-    allMoves(chessPtr, gamePtr);
 
+    allMoves(chessPtr, gamePtr);
     spritesUpdate(chessPtr);
 }
 
@@ -129,13 +127,13 @@ void blackShortClash(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
     (*chessPtr)[0][5] = movePiece;
 
 
-    gamePtr->turn = -gamePtr->turn; // change players
+    gamePtr->turn = -gamePtr->turn;
     gamePtr->event = 0;
     gamePtr->numTurn++;
     (*chessPtr)[0][6].num++; // +1 to number of times a king was moved
     (*chessPtr)[0][5].num++; // +1 to number of times a rook was moved
-    allMoves(chessPtr, gamePtr);
 
+    allMoves(chessPtr, gamePtr);
     spritesUpdate(chessPtr);
 }
 
@@ -157,13 +155,13 @@ void whiteLongClash(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
     (*chessPtr)[7][3] = movePiece;
 
 
-    gamePtr->turn = -gamePtr->turn; // change players
+    gamePtr->turn = -gamePtr->turn;
     gamePtr->event = 0;
     gamePtr->numTurn++;
     (*chessPtr)[7][2].num++; // +1 to number of times a king was moved
     (*chessPtr)[7][3].num++; // +1 to number of times a rook was moved
-    allMoves(chessPtr, gamePtr);
 
+    allMoves(chessPtr, gamePtr);
     spritesUpdate(chessPtr);
 }
 
@@ -185,12 +183,12 @@ void blackLongClash(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
     (*chessPtr)[0][3] = movePiece;
 
 
-    gamePtr->turn = -gamePtr->turn; // change players
+    gamePtr->turn = -gamePtr->turn;
     gamePtr->event = 0;
     gamePtr->numTurn++;
     (*chessPtr)[0][2].num++; // +1 to number of times a king was moved
     (*chessPtr)[0][3].num++; // +1 to number of times a rook was moved
+    
     allMoves(chessPtr, gamePtr);
-
     spritesUpdate(chessPtr);
 }

@@ -22,14 +22,15 @@ void canMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game *
     }
 }
 
-void drawMoves(sfRenderWindow* window, int moveBoard[8][8], struct game *gamePtr) {
+void drawMoves(sfRenderWindow* window, struct game *gamePtr, sfVector2i selectedPiece) {
     int radius = 32;
     int thick = 5;
     sfColor color = sfColor_fromRGBA(0, 0, 0, 96);
+    struct figure figure = gamePtr->chess[selectedPiece.y][selectedPiece.x];
 
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
-            if (moveBoard[i][j] == 1) {
+            if (figure.moveBoard[i][j] == 1) {
                 
                 sfVector2f position = {(SQUARE_SIZE/2 - radius) + j * SQUARE_SIZE, (SQUARE_SIZE/2 - radius) + i * SQUARE_SIZE};
 
@@ -42,8 +43,8 @@ void drawMoves(sfRenderWindow* window, int moveBoard[8][8], struct game *gamePtr
 
                 sfCircleShape_destroy(circle);
 
-                if (gamePtr->chess[i][j].name != '.' || (gamePtr->enPassant.x == j && gamePtr->enPassant.y == i)) {
-
+                if ((gamePtr->chess[i][j].name != '.') ||
+                ((figure.name == 'P' || figure.name == 'p') && gamePtr->enPassant.x == j && gamePtr->enPassant.y == i)) {
                     sfVector2f pos2 = {thick + j * SQUARE_SIZE, thick + i * SQUARE_SIZE};
 
                     sfCircleShape *outlineCircle = sfCircleShape_create();
@@ -51,7 +52,7 @@ void drawMoves(sfRenderWindow* window, int moveBoard[8][8], struct game *gamePtr
                     sfCircleShape_setRadius(outlineCircle, 64 - thick);
                     sfCircleShape_setFillColor(outlineCircle, sfTransparent);
                     sfCircleShape_setPosition(outlineCircle, pos2);
-                    sfCircleShape_setOutlineColor(outlineCircle, color); // Set the outline color of the circle
+                    sfCircleShape_setOutlineColor(outlineCircle, color);
                     sfCircleShape_setOutlineThickness(outlineCircle, thick);
 
                     sfRenderWindow_drawCircleShape(window, outlineCircle, NULL);
@@ -63,9 +64,6 @@ void drawMoves(sfRenderWindow* window, int moveBoard[8][8], struct game *gamePtr
     }    
 }
 
-/*
-Simple void function that changes every int in 2d moveBoard to 0
-*/
 void clearBoard(int board[8][8]) {
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
@@ -126,8 +124,8 @@ void allPossibilities(struct figure (*chessPtr)[8][8], struct game *gamePtr) {
                             newWhiteCheck = isWhiteCheck(newChessPtr, copyGamePtr);
                             newBlackCheck = isBlackCheck(newChessPtr, copyGamePtr);
 
+                            // If you are still checked
                             if (newWhiteCheck == gamePtr->turn || newBlackCheck == gamePtr->turn) {
-                                // You still are checked
                                 // Discard changes
                                 (*chessPtr)[i][j].moveBoard[n][m] = 0; // Disallow this move
                                 newChess[i][j] = movePiece; // revert move

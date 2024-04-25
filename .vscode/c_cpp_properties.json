@@ -4,8 +4,8 @@
             "name": "SFML",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/IT/vsprojects/external/SFML/include",
-                "C:/IT/vsprojects/external/SFML/lib"         
+                "C:/IT/vsprojects/external/SFML/include", // Here path to your SFML (CSFML) library/include
+                "C:/IT/vsprojects/external/SFML/lib" // Here path to your SFML (CSFML) library/lib
             ],
             "defines": [],
             "cStandard": "c11",

@@ -17,13 +17,13 @@ void canMove(struct figure (*chessPtr)[8][8], sfVector2i position, struct game *
 /// \brief Render circles representing possible moves.
 ///
 /// \param window       to display in
-/// \param moveboard    8x8 array of 0 and 1 representing
-///                     possible moves
 /// \param gamePtr      pointer to game structure containing
 ///                     all game informations
+/// \param selectedPiece    position of selected piece that
+///                         moves are draw for
 ///
 ////////////////////////////////////////////////////////////
-void drawMoves(sfRenderWindow* window, int moveBoard[8][8], struct game *gamePtr);
+void drawMoves(sfRenderWindow* window, struct game *gamePtr, sfVector2i selectedPiece);
 
 ////////////////////////////////////////////////////////////
 /// \brief Fill int 8x8 array with zeros.
