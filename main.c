@@ -9,15 +9,11 @@
 #include "lib/save_load.h"
 
 int main() {
-    // Window setting
-    sfVideoMode mode = {12 * SQUARE_SIZE, 8 * SQUARE_SIZE, 32};
-    sfRenderWindow* window = sfRenderWindow_create(mode, "CChess", sfTitlebar | sfClose, NULL);
-    sfRenderWindow_setFramerateLimit(window, 30);
+    // Window init
+    sfRenderWindow* window = createWindow();
 
-    sfImage* icon = sfImage_createFromFile("res/icon.png");
-    sfRenderWindow_setIcon(window, sfImage_getSize(icon).x, sfImage_getSize(icon).y, sfImage_getPixelsPtr(icon));
-
-    sfSprite* background = createBackground(); // Background sprite
+    // Background sprite init
+    sfSprite* background = createBackground();
     
     // Chessboard init
     sfRectangleShape* squares[8][8];
@@ -317,6 +313,7 @@ int main() {
     sfRectangleShape_destroy(saveLoadRect[0]);
     sfRectangleShape_destroy(saveLoadRect[1]);
     sfFont_destroy(font);
+
     sfRenderWindow_destroy(window);
 
     return 0;
