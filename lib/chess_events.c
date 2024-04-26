@@ -1,6 +1,5 @@
 #include "include_define.h"
 #include "chess_events.h"
-#include "moveboard.h"
 
 void copyChess(struct figure (*chessPtr)[8][8], struct figure (*newChessPtr)[8][8]) {
      for (int i=0; i<8; i++) {
@@ -73,51 +72,4 @@ int countPoints(struct game *gamePtr) {
     }
 
     return points;
-}
-
-void isMates(struct figure (*chessPtr)[8][8], struct game* gamePtr) {
-    int isStaleMate = 0;
-        if (gamePtr->turn == 1) {
-            gamePtr->check = isWhiteCheck(chessPtr, gamePtr);
-        } else {
-            gamePtr->check = isBlackCheck(chessPtr, gamePtr);
-        }
-
-    if (gamePtr->check != 0) {
-        // If check or mate
-
-        allPossibilities(chessPtr, gamePtr);
-
-        if (gamePtr->possibleMoves == 0) {
-            // If no legal moves and checked, then mate
-
-            gamePtr->event = 2;
-        } else {
-            // Else continue the game
-            gamePtr->possibleMoves = 0;
-        }
-    } else {
-        // Unmark illegal moves
-        allPossibilities(chessPtr, gamePtr);
-
-        if (gamePtr->possibleMoves == 0 && gamePtr->check == 0) {
-            // If no legal moves and not checked, then stale mate
-            gamePtr->event = 3;
-        } else {
-            for (int i=0; i<8; i++) {
-                for (int j=0; j<8; j++) {
-                    if ((*chessPtr)[i][j].name != 'K' && (*chessPtr)[i][j].name != 'k' && (*chessPtr)[i][j].name != '.') {
-                        // If kings are not the only pieces
-                        isStaleMate = 1;
-                    }
-                }
-            }
-            if (isStaleMate != 1) {
-                gamePtr->event = 3;
-            }
-            isStaleMate = 0;
-        }
-        // Otherwise it's normal move
-        gamePtr->possibleMoves = 0;
-    }
 }
