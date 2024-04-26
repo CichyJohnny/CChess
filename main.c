@@ -3,6 +3,7 @@
 #include "lib/chessboard.h"
 #include "lib/moveboard.h"
 #include "lib/chess_events.h"
+#include "lib/moves.h"
 #include "lib/clashing.h"
 #include "lib/actions.h"
 #include "lib/texts.h"
