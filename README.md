@@ -1,4 +1,5 @@
-# CChess
+# ![icon (2)](https://github.com/CichyJohnny/CChess/assets/137332118/313f5ecc-c0e3-40de-9322-37af6506ea3f) CChess
+
 
 CChess is simple desktop application made with C and SFML.
 
