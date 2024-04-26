@@ -1,5 +1,6 @@
 #include "lib/include_define.h"
 #include "lib/sprites.h"
+#include "lib/moves.h"
 #include "lib/chessboard.h"
 #include "lib/moveboard.h"
 #include "lib/chess_events.h"

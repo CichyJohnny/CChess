@@ -48,4 +48,15 @@ int isBlackCheck(struct figure (*chessPtr)[8][8], struct game *gamePtr);
 ////////////////////////////////////////////////////////////
 int countPoints(struct game *gamePtr);
 
+////////////////////////////////////////////////////////////
+/// \brief Check for check mate or stale mate
+///
+/// \param chessPtr     pointer to an 8x8 array of figures
+///                     representing chessboard
+/// \param gamePtr      pointer to game structure containing
+///                     all game informations
+///
+////////////////////////////////////////////////////////////
+void isMates(struct figure (*chessPtr)[8][8], struct game* gamePtr);
+
 #endif
