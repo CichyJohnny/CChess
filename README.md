@@ -46,7 +46,7 @@ Aditionally:
 2. [chess_events](lib/chess_events.h)
    - Handling check, check mate and stale mate
 3. [chessboard](lib/chessboard.h)
-   - Initialization and drawing empty chessboard
+   - initialization and drawing empty chessboard
 4. [clashing](lib/clashing.h)
    - Handling king - rook clashing
 5. [include_define](lib/include_define.h)
@@ -62,7 +62,7 @@ Aditionally:
 9. [sprites](lib/sprites.h)
    - Handling sprites of chess figures, save/load buttons and background
 10. [texts](lib/texts.h)
-    - Initalization of game informations texts
+    - initialization of game informations texts
 
 ## TODO
 
